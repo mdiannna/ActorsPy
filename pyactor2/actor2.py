@@ -27,3 +27,5 @@ class Actor(gevent.Greenlet):
                 
     def stop(self):
         self.running = False
+        # TODO:
+        # self.system.notify("I'm dead", self.name)
