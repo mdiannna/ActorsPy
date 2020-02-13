@@ -1,0 +1,18 @@
+ docker pull alexburlacu/rtp-server
+ mix new starter_project --sup
+
+----------------
+- meniuri din linia de comanda
+- write in linia de comanda
+- se afiseaza parametrii de la sensori
+- umiditate, temp etc
+- CUI (command line UI)
+- spoate la urma de facut pagina web etc.
+- reload after 5 secunde (valoare media, etc)
+- log/storace - kafka sau de facut propriul log storage
+
+
+- Elixir - static supervisor si dinamic supervisor
+
+!!!!!!!!!!!! update la docker pull de facut!!!
+!!!!!!!!!!!! de facut tot ca container docker
