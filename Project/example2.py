@@ -1,3 +1,14 @@
+# https://www.pykka.org/en/latest/quickstart/
+# https://thespianpy.com/doc/
+# https://medium.com/@ianjuma/the-actor-model-in-python-with-gevent-b8375d0986fa
+
+# https://www.pykka.org/en/latest/quickstart/
+# https://readthedocs.org/projects/pykka/downloads/pdf/develop/
+
+# Java:
+# https://github.com/zakgof/actr/tree/master/src
+
+
 import gevent
 from gevent.queue import Queue
 from gevent import Greenlet

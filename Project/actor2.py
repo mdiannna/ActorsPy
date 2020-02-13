@@ -29,3 +29,20 @@ class Actor(gevent.Greenlet):
         self.running = False
         # TODO:
         # self.system.notify("I'm dead", self.name)
+
+    # var childActors[string MailBox]:
+    #     get, set
+
+    # var mailboxes:
+    #     [MailBox]
+
+    # def children():
+    #     return   [String:MailBox]
+
+    # def addChild(actor, actorMailBox):
+    #     pass
+
+    # def removeChild(actor):
+    #     pass
+
+
