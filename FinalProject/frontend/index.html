@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Dark Bootstrap Admin by Bootstrapious.com</title>
     <meta name="description" content="">
+    <!-- Refresh every 10 seconds -->
+    <!-- <meta http-equiv="refresh" content="10">                 -->
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
@@ -315,5 +318,13 @@
     <script src="vendor/jquery-validation/jquery.validate.min.js"></script>
     <script src="js/charts-home.js"></script>
     <script src="js/front.js"></script>
+
+    <!-- Reload page every x seconds -->
+    <script type="text/javascript">
+    	update_time = 5; //5 seconds
+    	setTimeout(function(){
+		   window.location.reload(1);
+		}, update_time*1000);
+    </script>
   </body>
 </html>
