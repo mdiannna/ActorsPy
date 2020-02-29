@@ -72,6 +72,9 @@ def with_requests(url):
     return requests.get(url, stream=True)
 
 
+
+
+# Receive weather data from sensor from rtp-server
 @app.route('/receive-sse-sensor-data')
 def testSSE():
   url = 'http://0.0.0.0:4000/iot'
