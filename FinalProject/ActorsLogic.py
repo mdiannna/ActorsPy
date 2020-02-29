@@ -233,6 +233,10 @@ class Directory:
         if name in self.actors:
             return self.actors[name]
 
+
+# ROuter sau RoundRobin Distributor
+# de facut restartPolicy separat
+# in caz ca eroare - trebuie policy de restartat supervisor si client  (requestor)
 class Pool(Actor):
     def __init__(self, n):
         Actor.__init__(self)
@@ -271,6 +275,7 @@ def go():
 
     requestor.inbox.put('start')
 
+    # de ascuns in ceva abstract - sa nu se vada ca e gevent
     gevent.joinall([requestor, supervisor])
 
 directory = Directory()
