@@ -41,6 +41,9 @@ import gevent
 from gevent.queue import Queue
 from enum import Enum
 from gevent import Greenlet
+ 
+
+cnt_test = 0
 
 
 class States(Enum):
@@ -94,7 +97,10 @@ class VariableActorsStrategy:
     def next(self, demand_size):
         if demand_size <=3:
             value = self.queue.get()
+            # value.stop()
             if(self.queue.empty()):
+                # value.start()
+
                 self.queue.put(value)
 
         if demand_size >3 and demand_size <5:
@@ -142,6 +148,18 @@ class Actor(gevent.Greenlet):
             message = self.inbox.get()
             self.receive(message)
 
+    def stop(self):
+        self.state = States.Stopped
+        self.running = False
+        Greenlet.kill(self)
+
+    # def restart(self):
+    #     self.state = States.Running
+    #     self.running = True
+    
+    def get_state(self):
+        return self.state
+
 class Requestor(Actor):
     def __init__(self, name):
         Actor.__init__(self)
@@ -149,11 +167,20 @@ class Requestor(Actor):
         self.state = States.Idle
 
     def loop(self, supervisor):
+        global cnt_test
+
         while True:
             self.state = States.Running
             gevent.sleep(.5)
             print("...Requesting work...")
-            supervisor.inbox.put('Some work.')
+            
+            if(cnt_test>=10):
+                cnt_test =0
+                supervisor.inbox.put('PANIC')
+            else:
+                supervisor.inbox.put('Some work.')
+
+            cnt_test += 1
 
     def ack(self):
         print("\n !! Thanks worker !!\n")
@@ -181,6 +208,10 @@ class Worker(Actor):
         client.inbox.put("work done")
         self.state = States.Idle
 
+    def get_name(self):
+        return self.name
+
+
 MAX_WORK_CAPACITY_SUPERVISOR = 10
 
 class WorkerSupervisor(Actor):
@@ -188,8 +219,8 @@ class WorkerSupervisor(Actor):
         Actor.__init__(self)
         self.name = name
         self.workers = workers
-        # self.supervisor_strategy = RoundRobinIndexer(len(workers))
-        self.supervisor_strategy = VariableActorsStrategy(len(workers))
+        self.supervisor_strategy = RoundRobinIndexer(len(workers))
+        # self.supervisor_strategy = VariableActorsStrategy(len(workers))
         self.state = States.Idle
         
         self.demandWorkQueue = Queue(maxsize=MAX_WORK_CAPACITY_SUPERVISOR)
@@ -214,10 +245,43 @@ class WorkerSupervisor(Actor):
         self.demandWorkQueue.put(message)
         print(self.demandWorkQueue.qsize())
 
-        index = self.supervisor_strategy.next(self.demandWorkQueue.qsize())
+        # index = self.supervisor_strategy.next(self.demandWorkQueue.qsize())
+        index = self.supervisor_strategy.next()
         print("Sending work to worker %s [%d]" % (self.workers[index].name, self.inbox.qsize()))
 
+        current_actor = self.workers[index]
+        
+
+
+
+
+        # ////////////////
+        # IF MESSAGE==PANIC
+        if(message=='{"message": panic}' or message=="panic" or message=="PANIC"):
+            print("PANIC")
+            name = current_actor.get_name()
+
+            worker_to_be_restarted = Worker(name)
+            worker_to_be_restarted.start()
+
+            current_actor.stop()
+
+            print("killed worker %s" % name)
+            
+            self.workers[index] = worker_to_be_restarted
+            # print(worker_to_be_restarted)
+            # print(worker_to_be_restarted.get_state())
+            print(self.workers[index])
+            # directory.add_actor("client", requestor)
+
+            # /////////////////////////////
+
+        print(self.workers[index].get_state())
+
+        # directory.add_actor(worker_to_be_restarted.get_name, worker_to_be_restarted)
         self.workers[index].inbox.put(message)
+        # worker_to_be_restarted.inbox.put(message)
+        # current_actor.inbox.put(message)
 
         self.demandWorkQueue.get()
 
@@ -281,5 +345,5 @@ def go():
 directory = Directory()
 # gevent.joinall([gevent.spawn(go)])
 
-pool = Pool(5) # try 2, 3, 5, 8...
+pool = Pool(10) # try 2, 3, 5, 8...
 gevent.joinall([gevent.spawn(pool.start)])
