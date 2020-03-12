@@ -52,7 +52,8 @@ sau cu tcp - cu get - api
 ---------------------------------
 cum de rulat proiectul!
 
-sudo docker container run --publish 4000:4000 --detach --name patr alexburlacu/rtp-server curl http://127.0.0.1:4000/iot
+sudo docker container run --publish 4000:4000 --detach --name patr alexburlacu/rtp-server 
+curl http://127.0.0.1:4000/iot
 
 din cod server:
 
