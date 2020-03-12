@@ -122,6 +122,11 @@ class VariableActorsStrategy:
             value = self.queue.get()
             self.queue.put(value)
 
+            # new_worker = Worker("Worker-%d" % self.queue.qsize())
+            # new_worker.start()
+            # self.workers.append(new_worker)
+
+
         return value
 
     def lastDemand(self):
@@ -219,8 +224,8 @@ class WorkerSupervisor(Actor):
         Actor.__init__(self)
         self.name = name
         self.workers = workers
-        self.supervisor_strategy = RoundRobinIndexer(len(workers))
-        # self.supervisor_strategy = VariableActorsStrategy(len(workers))
+        # self.supervisor_strategy = RoundRobinIndexer(len(workers))
+        self.supervisor_strategy = VariableActorsStrategy(len(workers))
         self.state = States.Idle
         
         self.demandWorkQueue = Queue(maxsize=MAX_WORK_CAPACITY_SUPERVISOR)
@@ -245,8 +250,15 @@ class WorkerSupervisor(Actor):
         self.demandWorkQueue.put(message)
         print(self.demandWorkQueue.qsize())
 
-        # index = self.supervisor_strategy.next(self.demandWorkQueue.qsize())
-        index = self.supervisor_strategy.next()
+
+        # if(self.demandWorkQueue.qsize()>5):
+        #     new_worker = Worker("Worker-%d" % self.queue.qsize())
+        #     new_worker.start()
+        #     self.workers.append(new_worker)
+
+
+        index = self.supervisor_strategy.next(self.demandWorkQueue.qsize())
+        # index = self.supervisor_strategy.next()
         print("Sending work to worker %s [%d]" % (self.workers[index].name, self.inbox.qsize()))
 
         current_actor = self.workers[index]
