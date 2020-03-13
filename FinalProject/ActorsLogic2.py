@@ -398,9 +398,19 @@ class WorkerSupervisor(Actor):
                 
         #THIS WORKS!!!
         # TODO:check if not empty
-        if cnt_test ==6:
-            self.remove_worker()
+        # if cnt_test ==6:
+        if (self.workers.qsize()> (self.demandWorkQueue.qsize()+ 6)):
+            for i in range(self.demandWorkQueue.qsize()-self.workers.qsize()):
+                self.remove_worker()
+        else:
+            if(self.workers.qsize()>( self.demandWorkQueue.qsize()+ 4)):
+                self.remove_worker()
+                self.remove_worker()
+            else:
+                if(self.workers.qsize()>( self.demandWorkQueue.qsize()+ 2)):
+                    self.remove_worker()
             
+        
 
         self.demandWorkQueue.get()
 
