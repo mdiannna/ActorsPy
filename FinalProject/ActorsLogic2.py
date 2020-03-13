@@ -221,7 +221,20 @@ class Worker(Actor):
 MAX_WORK_CAPACITY_SUPERVISOR = 10
 
 
+class PrinterActor(Actor):
+    def __init__(self):
+        Actor.__init__(self)
+        self.name = "PrinterActor"
+        self.state = States.Idle
 
+    def start(self):
+        Actor.start(self)
+
+    def receive(self, message):
+        # message["text"]
+        # message["type"]
+        if message["type"]=="warning":
+            prettyprint.print_warning(message["text"])
 
 
 class WorkerSupervisor(Actor):
@@ -240,6 +253,10 @@ class WorkerSupervisor(Actor):
 
         self.add_worker()    
         self.add_worker()    
+
+        self.printer_actor = PrinterActor()
+        self.printer_actor.start()
+
 
         self.demandWorkQueue = Queue(maxsize=MAX_WORK_CAPACITY_SUPERVISOR)
 
@@ -277,7 +294,10 @@ class WorkerSupervisor(Actor):
             # w.start()
 
     def receive(self, message):
-        print("Receives work")
+        print(self.printer_actor)
+        # self.printer_actor.inbox.put(message="Receives work", msg_type="warning")
+        self.printer_actor.inbox.put({"text":'Receives work', "type":'warning'})
+        # print("Receives work")
         # if -1 == len(self.workers) - 1:
         if -1 == self.workers.qsize() - 1 or self.workers.empty():
             prettyprint.print_error("Supervisor received work but no workers to give it to!")
