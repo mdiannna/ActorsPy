@@ -220,22 +220,43 @@ class Worker(Actor):
 MAX_WORK_CAPACITY_SUPERVISOR = 10
 
 class WorkerSupervisor(Actor):
-    def __init__(self, name, workers):
+    def __init__(self, name):
         Actor.__init__(self)
         self.name = name
-        self.workers = workers
+        self.workers = Queue(maxsize=MAX_WORK_CAPACITY_SUPERVISOR)
         # self.supervisor_strategy = RoundRobinIndexer(len(workers))
-        self.supervisor_strategy = VariableActorsStrategy(len(workers))
+        self.supervisor_strategy = RoundRobinIndexer(2)
+        # self.supervisor_strategy = VariableActorsStrategy(len(workers))
         self.state = States.Idle
-        
+        self.add_worker("worker1")    
+        self.add_worker("worker2")    
         self.demandWorkQueue = Queue(maxsize=MAX_WORK_CAPACITY_SUPERVISOR)
+
+    def add_worker(self, name):
+        new_worker = Worker(name)
+        new_worker.start()
+        self.workers.put(new_worker)
+
+    # Don't know if needed
+    def add_inactive_worker(self, name):
+        new_worker = Worker(name)
+        # new_worker.start()
+        self.workers.put(new_worker)
+
+    def remove_worker(self):
+        print("--qsize", self.workers.qsize())
+        worker = self.workers.get()
+        print("Remove worker %s" % worker.get_name())
+        worker.stop()
+        print("--qsize", self.workers.qsize())
+        
 
 
     def start(self):
         Actor.start(self)
 
-        for w in self.workers:
-            w.start()
+        # for w in self.workers:
+            # w.start()
 
     def receive(self, message):
         if -1 == len(self.workers) - 1:
@@ -257,12 +278,15 @@ class WorkerSupervisor(Actor):
         #     self.workers.append(new_worker)
 
 
-        index = self.supervisor_strategy.next(self.demandWorkQueue.qsize())
+        # index = self.supervisor_strategy.next(self.demandWorkQueue.qsize())
         # index = self.supervisor_strategy.next()
-        print("Sending work to worker %s [%d]" % (self.workers[index].name, self.inbox.qsize()))
 
-        current_actor = self.workers[index]
-        
+        current_worker = self.workers.get()
+
+        print("Sending work to worker %s [%d]" % (current_worker.name, self.inbox.qsize()))
+
+        # current_actor = self.workers[index]
+        current_actor = current_worker
 
 
 
@@ -278,22 +302,36 @@ class WorkerSupervisor(Actor):
 
             current_actor.stop()
 
-            print("killed worker %s" % name)
+            print("--killed worker %s" % name)
             
-            self.workers[index] = worker_to_be_restarted
-            # print(worker_to_be_restarted)
-            # print(worker_to_be_restarted.get_state())
-            print(self.workers[index])
-            # directory.add_actor("client", requestor)
+            # self.workers[index] = worker_to_be_restarted
+            # # print(worker_to_be_restarted)
+            # # print(worker_to_be_restarted.get_state())
+            # print(self.workers[index])
+            # # directory.add_actor("client", requestor)
 
+            self.workers.put(worker_to_be_restarted)
+            # worker_to_be_restarted.inbox.put(message)
+            print("--restarted worker %s" %worker_to_be_restarted.get_name())
             # /////////////////////////////
+        else:
+            self.workers.put(current_actor)
+            current_actor.inbox.put(message)
 
-        print(self.workers[index].get_state())
+        # Only for test, to be deleted
+        global cnt_test
 
-        # directory.add_actor(worker_to_be_restarted.get_name, worker_to_be_restarted)
-        self.workers[index].inbox.put(message)
-        # worker_to_be_restarted.inbox.put(message)
-        # current_actor.inbox.put(message)
+        # THIS WORKS!!!
+        # TODO:check if doesn't exceed max workers
+        if cnt_test ==5:
+            print("Add new_worker_%d"%self.workers.qsize())
+            self.add_worker("new_worker%d" %self.workers.qsize())
+
+        #THIS WORKS!!!
+        # TODO:check if not empty
+        if cnt_test ==6:
+            self.remove_worker()
+            
 
         self.demandWorkQueue.get()
 
@@ -321,8 +359,7 @@ class Pool(Actor):
         # for i in range(0, n):
         #     self.workers.append(Worker("worker-%d" % i))
 
-        # self.supervisor = WorkerSupervisor("Supervisor", self.workers)
-        self.supervisor = WorkerSupervisor("Supervisor", [])
+        self.supervisor = WorkerSupervisor("Supervisor")
         self.requestor = Requestor('Client')
 
         directory.add_actor("supervisor", self.supervisor)
@@ -332,28 +369,28 @@ class Pool(Actor):
         self.requestor.start()
         self.supervisor.start()
         self.requestor.inbox.put('start')
+       # de ascuns in ceva abstract - sa nu se vada ca e gevent
         gevent.joinall([self.requestor, self.supervisor])
 
     def get_actors(self):
         return [self.requestor, self.supervisor]
 
-# If you didn't like pool
-def go():
-    requestor = Requestor('Client')
-    worker = Worker("Worker-1")
-    worker2 = Worker("Worker-2")
-    supervisor = WorkerSupervisor("Supervisor", [worker, worker2])
+# def go():
+#     requestor = Requestor('Client')
+#     worker = Worker("Worker-1")
+#     worker2 = Worker("Worker-2")
+#     supervisor = WorkerSupervisor("Supervisor", [worker, worker2])
 
-    directory.add_actor("supervisor", supervisor)
-    directory.add_actor("client", requestor)
+#     directory.add_actor("supervisor", supervisor)
+#     directory.add_actor("client", requestor)
 
-    requestor.start()
-    supervisor.start()
+#     requestor.start()
+#     supervisor.start()
 
-    requestor.inbox.put('start')
+#     requestor.inbox.put('start')
 
-    # de ascuns in ceva abstract - sa nu se vada ca e gevent
-    gevent.joinall([requestor, supervisor])
+#     # de ascuns in ceva abstract - sa nu se vada ca e gevent
+#     gevent.joinall([requestor, supervisor])
 
 directory = Directory()
 # gevent.joinall([gevent.spawn(go)])
