@@ -176,7 +176,7 @@ class Requestor(Actor):
 
         while True:
             self.state = States.Running
-            gevent.sleep(.5)
+            gevent.sleep(1)
             print("...Requesting work...")
             
             if(cnt_test>=10):
@@ -222,9 +222,9 @@ MAX_WORK_CAPACITY_SUPERVISOR = 10
 
 
 class PrinterActor(Actor):
-    def __init__(self):
+    def __init__(self, name):
         Actor.__init__(self)
-        self.name = "PrinterActor"
+        self.name = name
         self.state = States.Idle
 
     def start(self):
@@ -235,6 +235,18 @@ class PrinterActor(Actor):
         # message["type"]
         if message["type"]=="warning":
             prettyprint.print_warning(message["text"])
+        if message["type"]=="warning-bold":
+            prettyprint.print_warning(prettyprint.bold(message["text"]))
+        if message["type"]=="error":
+            prettyprint.print_error(prettyprint.bold(message["text"]))
+        if message["type"]=="blue" or message["type"]=="normal":
+            prettyprint.print_blue(message["text"])
+        if message["type"]=="green" or message["type"]=="ok" or message["type"]=="success":
+            prettyprint.print_green(message["text"])
+        if message["type"]=="underline":
+            prettyprint.print_underline(message["text"])
+        if message["type"]=="header":
+            prettyprint.print_header(message["text"])
 
 
 class WorkerSupervisor(Actor):
@@ -254,7 +266,7 @@ class WorkerSupervisor(Actor):
         self.add_worker()    
         self.add_worker()    
 
-        self.printer_actor = PrinterActor()
+        self.printer_actor = PrinterActor("Supervisor_printer")
         self.printer_actor.start()
 
 
@@ -267,7 +279,7 @@ class WorkerSupervisor(Actor):
     def add_worker(self):
         self.workers_cnt_id += 1
         new_worker = Worker("worker%d" % self.workers_cnt_id)
-        prettyprint.print_warning("ADD WORKER")
+        prettyprint.print_warning("ADD WORKER %d" % self.workers_cnt_id)
 
         new_worker.start()
         self.workers.put(new_worker)
@@ -294,19 +306,19 @@ class WorkerSupervisor(Actor):
             # w.start()
 
     def receive(self, message):
-        print(self.printer_actor)
-        # self.printer_actor.inbox.put(message="Receives work", msg_type="warning")
-        self.printer_actor.inbox.put({"text":'Receives work', "type":'warning'})
+        # print(self.printer_actor)
+        self.printer_actor.inbox.put({"text":'Receives work', "type":'normal'})
         # print("Receives work")
         # if -1 == len(self.workers) - 1:
         if -1 == self.workers.qsize() - 1 or self.workers.empty():
-            prettyprint.print_error("Supervisor received work but no workers to give it to!")
-            prettyprint.print_warning("Adding new worker")
+            self.printer_actor.inbox.put({"text":"Supervisor received work but no workers to give it to!",
+                "type":"error"})
+            self.printer_actor.inbox.put({"text":"Adding new worker", "type":"warning"})
             self.add_worker()
             # raise Exception("Supervisor received work but no workers to give it to!")
 
-        if MAX_WORK_CAPACITY_SUPERVISOR <= self.demandWorkQueue.qsize():
-            raise Exception("Supervisor received work but no workers to give it to!")
+        # if MAX_WORK_CAPACITY_SUPERVISOR <= self.demandWorkQueue.qsize():
+            # raise Exception("Too much work!")
 
         # print("demandWorkQueue size:")
         # print(self.demandWorkQueue.qsize())
@@ -316,14 +328,6 @@ class WorkerSupervisor(Actor):
         print("Demand work: %d" %self.demandWorkQueue.qsize())
 
 
-        # if(self.demandWorkQueue.qsize()>5):
-        #     new_worker = Worker("Worker-%d" % self.queue.qsize())
-        #     new_worker.start()
-        #     self.workers.append(new_worker)
-
-
-        # index = self.supervisor_strategy.next(self.demandWorkQueue.qsize())
-        # index = self.supervisor_strategy.next()
 
         current_worker = self.workers.get()
 
@@ -338,7 +342,9 @@ class WorkerSupervisor(Actor):
         # ////////////////
         # IF MESSAGE==PANIC
         if(message=='{"message": panic}' or message=="panic" or message=="PANIC"):
-            print("PANIC")
+            # print("PANIC")
+            self.printer_actor.inbox.put({"text":"!!! PANIC !!!", "type":'warning-bold'})
+
             name = current_actor.get_name()
 
             worker_to_be_restarted = Worker(name)
@@ -346,7 +352,8 @@ class WorkerSupervisor(Actor):
 
             current_actor.stop()
 
-            print("--killed worker %s" % name)
+            self.printer_actor.inbox.put({"text":"--killed worker %s" % name, "type":'warning'})
+            # print("--killed worker %s" % name)
             
             # self.workers[index] = worker_to_be_restarted
             # # print(worker_to_be_restarted)
@@ -356,7 +363,8 @@ class WorkerSupervisor(Actor):
 
             self.workers.put(worker_to_be_restarted)
             # worker_to_be_restarted.inbox.put(message)
-            print("--restarted worker %s" %worker_to_be_restarted.get_name())
+            self.printer_actor.inbox.put({"text":"--restarted worker %s" %worker_to_be_restarted.get_name(), "type":'warning'})
+            # print("--restarted worker %s" %worker_to_be_restarted.get_name())
             # /////////////////////////////
         else:
             self.workers.put(current_actor)
@@ -368,9 +376,26 @@ class WorkerSupervisor(Actor):
         # THIS WORKS!!!
         # TODO:check if doesn't exceed max workers
         # if cnt_test ==5:
-        #     print("Add new_worker_%d"%self.workers.qsize())
-        #     self.add_worker("new_worker%d" %self.workers.qsize())
+        if(self.demandWorkQueue.qsize()>2):
+            # self.add_worker("new_worker%d" %self.workers.qsize())
+            self.add_worker()
+            # print("Add new_worker_%d"%self.workers.qsize())
+        
+        if(self.demandWorkQueue.qsize()>4):
+            # self.add_worker("new_worker%d" %self.workers.qsize())
+            self.add_worker()
+            self.add_worker()
 
+        if(self.demandWorkQueue.qsize()>6):
+            # self.add_worker("new_worker%d" %self.workers.qsize())
+            self.add_worker()
+            self.add_worker()
+            self.add_worker()
+
+        if(self.demandWorkQueue.qsize()>8):
+            for i in range(1, self.demandWorkQueue.qsize()/1.5):
+                self.add_worker()
+                
         #THIS WORKS!!!
         # TODO:check if not empty
         if cnt_test ==6:
@@ -434,7 +459,20 @@ class Pool(Actor):
 #     requestor.inbox.put('start')
 
 #     # de ascuns in ceva abstract - sa nu se vada ca e gevent
+
 #     gevent.joinall([requestor, supervisor])
+
+
+
+###################
+# main
+###################
+# IF using actor => this message might not appear at the beginning of the project
+# printer_main = PrinterActor("Printer actor")
+# printer_main.start()
+# printer_main.inbox.put({"text":"Program started", "type":"header"})
+
+prettyprint.print_header("Program started")
 
 directory = Directory()
 # gevent.joinall([gevent.spawn(go)])
