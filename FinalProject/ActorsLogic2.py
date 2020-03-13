@@ -41,7 +41,7 @@ import gevent
 from gevent.queue import Queue
 from enum import Enum
 from gevent import Greenlet
- 
+import prettyprint
 
 cnt_test = 0
 
@@ -183,6 +183,7 @@ class Requestor(Actor):
                 cnt_test =0
                 supervisor.inbox.put('PANIC')
             else:
+                print("Some work")
                 supervisor.inbox.put('Some work.')
 
             cnt_test += 1
@@ -219,6 +220,10 @@ class Worker(Actor):
 
 MAX_WORK_CAPACITY_SUPERVISOR = 10
 
+
+
+
+
 class WorkerSupervisor(Actor):
     def __init__(self, name):
         Actor.__init__(self)
@@ -228,12 +233,25 @@ class WorkerSupervisor(Actor):
         self.supervisor_strategy = RoundRobinIndexer(2)
         # self.supervisor_strategy = VariableActorsStrategy(len(workers))
         self.state = States.Idle
-        self.add_worker("worker1")    
-        self.add_worker("worker2")    
+
+        # self.add_worker("worker1")    
+        # self.add_worker("worker2")    
+        self.workers_cnt_id = 0
+
+        self.add_worker()    
+        self.add_worker()    
+
         self.demandWorkQueue = Queue(maxsize=MAX_WORK_CAPACITY_SUPERVISOR)
 
-    def add_worker(self, name):
-        new_worker = Worker(name)
+    # def add_worker(self, name):
+    #     new_worker = Worker(name)
+    #     new_worker.start()
+    #     self.workers.put(new_worker)
+    def add_worker(self):
+        self.workers_cnt_id += 1
+        new_worker = Worker("worker%d" % self.workers_cnt_id)
+        prettyprint.print_warning("ADD WORKER")
+
         new_worker.start()
         self.workers.put(new_worker)
 
@@ -259,8 +277,13 @@ class WorkerSupervisor(Actor):
             # w.start()
 
     def receive(self, message):
-        if -1 == len(self.workers) - 1:
-            raise Exception("Supervisor received work but no workers to give it to!")
+        print("Receives work")
+        # if -1 == len(self.workers) - 1:
+        if -1 == self.workers.qsize() - 1 or self.workers.empty():
+            prettyprint.print_error("Supervisor received work but no workers to give it to!")
+            prettyprint.print_warning("Adding new worker")
+            self.add_worker()
+            # raise Exception("Supervisor received work but no workers to give it to!")
 
         if MAX_WORK_CAPACITY_SUPERVISOR <= self.demandWorkQueue.qsize():
             raise Exception("Supervisor received work but no workers to give it to!")
@@ -268,8 +291,9 @@ class WorkerSupervisor(Actor):
         # print("demandWorkQueue size:")
         # print(self.demandWorkQueue.qsize())
 
+        # self.demandWorkQueue.put(message)
         self.demandWorkQueue.put(message)
-        print(self.demandWorkQueue.qsize())
+        print("Demand work: %d" %self.demandWorkQueue.qsize())
 
 
         # if(self.demandWorkQueue.qsize()>5):
@@ -323,9 +347,9 @@ class WorkerSupervisor(Actor):
 
         # THIS WORKS!!!
         # TODO:check if doesn't exceed max workers
-        if cnt_test ==5:
-            print("Add new_worker_%d"%self.workers.qsize())
-            self.add_worker("new_worker%d" %self.workers.qsize())
+        # if cnt_test ==5:
+        #     print("Add new_worker_%d"%self.workers.qsize())
+        #     self.add_worker("new_worker%d" %self.workers.qsize())
 
         #THIS WORKS!!!
         # TODO:check if not empty
