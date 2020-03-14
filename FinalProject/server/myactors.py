@@ -46,6 +46,7 @@ import prettyprint
 cnt_test = 0
 
 
+
 class States(Enum):
     Idle = 0
     Stopped = 1
@@ -165,6 +166,10 @@ class Actor(gevent.Greenlet):
     def get_state(self):
         return self.state
 
+    def get_name(self):
+        return self.name
+
+
 
 from mysseclient import with_requests
 # from mysseclient import with_urllib3
@@ -184,8 +189,10 @@ class Requestor(Actor):
         # response = with_urllib3(url)  
         self.response = with_requests(self.url)
 
+        self.supervisor_restart_policy = SupervisorRestartPolicy()
 
-    def loop(self, supervisor):
+
+    def loop(self):
         global cnt_test
 
         # while True:
@@ -198,18 +205,26 @@ class Requestor(Actor):
             print(event)
             print(event.data)
 
-            gevent.sleep(1)
+            # gevent.sleep(1)
+            gevent.sleep(0.5)
             print("...Requesting work...")
 
             if(event.data=='{"message": panic}'):
               print("PANIC")
-              supervisor.inbox.put('PANIC')
+              self.supervisor.inbox.put('PANIC')
+            
             else:
-                # print(json.loads(event.data))
-                pprint.pprint(json.loads(event.data))
-                sensors_data = json.loads(event.data)["message"]
-                print(sensors_data)
-                supervisor.inbox.put('Some work.')
+                if(event.data=='restart_supervisor'):
+                    prettyprint.print_error(" !!!Restart Supervisor!!! ")
+                    prettyprint.print_blue("Supervisr:" + str(self.supervisor.get_name()))
+                    self.supervisor = self.supervisor_restart_policy.restart(self.supervisor)
+                    prettyprint.print_green("Supervisor:" + str(self.supervisor.get_name()))
+                else:
+                    # print(json.loads(event.data))
+                    pprint.pprint(json.loads(event.data))
+                    sensors_data = json.loads(event.data)["message"]
+                    print(sensors_data)
+                    self.supervisor.inbox.put('Some work.')
 
             print("----")
 
@@ -232,8 +247,8 @@ class Requestor(Actor):
             gevent.spawn(self.ack)
         elif message == "start":
             print("Requestor starting...")
-            supervisor = directory.get_actor('supervisor')
-            gevent.spawn(self.loop, supervisor)
+            self.supervisor = directory.get_actor('supervisor')
+            gevent.spawn(self.loop)
 
 
 class Worker(Actor):
@@ -249,9 +264,6 @@ class Worker(Actor):
         client = directory.get_actor("client")
         client.inbox.put("work done")
         self.state = States.Idle
-
-    def get_name(self):
-        return self.name
 
 
 MAX_WORK_CAPACITY_SUPERVISOR = 10
@@ -285,23 +297,69 @@ class PrinterActor(Actor):
             prettyprint.print_header(message["text"])
 
 
+
+# class SupervisorRestartPolicy(Actor):
+        
+#     OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = 1 minute) {
+#       case _: ArithmeticException      => Resume
+#       case _: NullPointerException     => Restart
+#       case _: IllegalArgumentException => Stop
+#       case _: Exception                => Escalate
+#     }
+
+
+class SupervisorRestartPolicy():
+    def restart(self, supervisor):
+        workers_children = []
+
+        while(not supervisor.workers.empty()):
+            worker = supervisor.workers.get()
+            new_worker = worker.get_name()
+            # mew_worker.start()
+            worker.stop()
+
+            # workers_children.put(supervisor.workers.get())
+            workers_children.append(new_worker)
+
+        supervisor_name = supervisor.get_name()
+        supervisor.stop()
+
+        new_supervisor = WorkerSupervisor(supervisor_name, workers_array=workers_children)
+        new_supervisor.start()
+        return new_supervisor
+
+
+        
+
 class WorkerSupervisor(Actor):
-    def __init__(self, name):
+
+
+    def __init__(self, name, workers_array=[]):
         Actor.__init__(self)
         self.name = name
-        self.workers = Queue(maxsize=MAX_WORK_CAPACITY_SUPERVISOR)
+
         # self.supervisor_strategy = RoundRobinIndexer(len(workers))
         self.supervisor_strategy = RoundRobinIndexer(2)
         # self.supervisor_strategy = VariableActorsStrategy(len(workers))
         self.state = States.Idle
+        
+        self.workers = Queue(maxsize=MAX_WORK_CAPACITY_SUPERVISOR)
+        self.workers_cnt_id = 0
+        
+        if len(workers_array)>0:
+            for worker_name in workers_array:
+                print("WORKER_NAME", worker_name)
+                self.add_named_worker(worker_name)    
+        else:
+            self.add_worker()    
+            self.add_worker()    
 
+                
+            
         # self.add_worker("worker1")    
         # self.add_worker("worker2")    
-        self.workers_cnt_id = 0
 
-        self.add_worker()    
-        self.add_worker()    
-
+        
         self.printer_actor = PrinterActor("Supervisor_printer")
         self.printer_actor.start()
 
@@ -316,6 +374,14 @@ class WorkerSupervisor(Actor):
         self.workers_cnt_id += 1
         new_worker = Worker("worker%d" % self.workers_cnt_id)
         prettyprint.print_warning("ADD WORKER %d" % self.workers_cnt_id)
+
+        new_worker.start()
+        self.workers.put(new_worker)
+
+    def add_named_worker(self, name):
+        self.workers_cnt_id += 1
+        new_worker = Worker(name)
+        prettyprint.print_warning("ADD NAMED WORKER %s" % name)
 
         new_worker.start()
         self.workers.put(new_worker)
@@ -473,12 +539,13 @@ class Pool(Actor):
 
         # for i in range(0, n):
         #     self.workers.append(Worker("worker-%d" % i))
-
         self.supervisor = WorkerSupervisor("Supervisor")
         self.requestor = Requestor('Client')
 
         directory.add_actor("supervisor", self.supervisor)
         directory.add_actor("client", self.requestor)
+
+        self.supervisor_restart_policy = SupervisorRestartPolicy()
 
     def start(self):
         self.requestor.start()
