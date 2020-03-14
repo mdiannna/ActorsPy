@@ -528,6 +528,16 @@ class Directory:
         if name in self.actors:
             return self.actors[name]
 
+    # TODO
+    # def remove_actor(self, name, actor):
+    #     gevent.kill(actor)
+
+    # def restart_actor(self, name, actor):
+    #     gevent.kill(actor)
+    #     gevent.joinall(new_actor)
+
+    # def restart_supervisor(self, supervisor):
+
 
 # ROuter sau RoundRobin Distributor
 # de facut restartPolicy separat
