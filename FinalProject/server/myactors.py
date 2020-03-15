@@ -402,6 +402,8 @@ class WorkerSupervisor(Actor):
 
     def get_printer_actor(self):
         return self.printer_actor            
+
+        
 ###############################
 # Restart Policies
 ###############################
@@ -479,19 +481,11 @@ class Directory:
 
 
 
-    # def restart_actor(self, name, actor):
-    #     gevent.kill(actor)
-    #     gevent.joinall(new_actor)
-
-
 # in caz ca eroare - trebuie policy de restartat supervisor si client  (requestor)
 class Pool(Actor):
     def __init__(self, n):
         Actor.__init__(self)
-        # self.workers = []
 
-        # for i in range(0, n):
-        #     self.workers.append(Worker("worker-%d" % i))
         self.supervisor = WorkerSupervisor("Supervisor")
         self.requestor = Requestor('Client')
 
@@ -504,29 +498,10 @@ class Pool(Actor):
         self.requestor.start()
         self.supervisor.start()
         self.requestor.inbox.put('start')
-       # de ascuns in ceva abstract - sa nu se vada ca e gevent
         gevent.joinall([self.requestor, self.supervisor])
 
     def get_actors(self):
         return [self.requestor, self.supervisor]
-
-# def go():
-#     requestor = Requestor('Client')
-#     worker = Worker("Worker-1")
-#     worker2 = Worker("Worker-2")
-#     supervisor = WorkerSupervisor("Supervisor", [worker, worker2])
-
-#     directory.add_actor("supervisor", supervisor)
-#     directory.add_actor("client", requestor)
-
-#     requestor.start()
-#     supervisor.start()
-
-#     requestor.inbox.put('start')
-
-#     # de ascuns in ceva abstract - sa nu se vada ca e gevent
-#     gevent.joinall([requestor, supervisor])
-
 
 
 ###################
