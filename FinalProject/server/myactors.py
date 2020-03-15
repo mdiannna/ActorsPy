@@ -206,25 +206,35 @@ class Requestor(Actor):
             print(event.data)
 
             # gevent.sleep(1)
+            # gevent.sleep(0.2)
             gevent.sleep(0.5)
             print("...Requesting work...")
 
             if(event.data=='{"message": panic}'):
-              print("PANIC")
-              self.supervisor.inbox.put('PANIC')
+            #   print("PANIC")
+            #   self.supervisor.inbox.put('PANIC')
             
-            else:
-                if(event.data=='restart_supervisor'):
+            # else:
+            #     if(event.data=='restart_supervisor'):
+            #     # if(2==2):
+
                     prettyprint.print_error(" !!!Restart Supervisor!!! ")
                     prettyprint.print_blue("Supervisr:" + str(self.supervisor.get_name()))
-                    self.supervisor = self.supervisor_restart_policy.restart(self.supervisor)
+                    # self.supervisor = self.supervisor_restart_policy.restart(self.supervisor)
+                    supervisor = directory.restart_supervisor(self.supervisor)
+
+                    # self.supervisor = directory.get_actor('supervisor')
+                    # self.supervisor = directory.get_actor('supervisor')
+                    self.supervisor = supervisor
                     prettyprint.print_green("Supervisor:" + str(self.supervisor.get_name()))
-                else:
-                    # print(json.loads(event.data))
-                    pprint.pprint(json.loads(event.data))
-                    sensors_data = json.loads(event.data)["message"]
-                    print(sensors_data)
-                    self.supervisor.inbox.put('Some work.')
+                    prettyprint.print_green("workers:" + str(self.supervisor.workers))
+                    prettyprint.print_green("workers:" + str(self.supervisor.workers.qsize()))
+            else:
+                # print(json.loads(event.data))
+                pprint.pprint(json.loads(event.data))
+                sensors_data = json.loads(event.data)["message"]
+                print(sensors_data)
+                self.supervisor.inbox.put('Some work.')
 
             print("----")
 
@@ -240,7 +250,8 @@ class Requestor(Actor):
             cnt_test += 1
 
     def ack(self):
-        print("\n !! Thanks worker !!\n")
+        # print("\n !! Thanks worker !!\n")
+        prettyprint.print_success("\n !! Thanks worker !!\n")
 
     def receive(self, message):
         if message == "work done":
@@ -353,6 +364,8 @@ class WorkerSupervisor(Actor):
         else:
             self.add_worker()    
             self.add_worker()    
+            self.add_worker()    
+            self.add_worker()    
 
                 
             
@@ -395,7 +408,7 @@ class WorkerSupervisor(Actor):
     def remove_worker(self):
         print("--qsize", self.workers.qsize())
         worker = self.workers.get()
-        print("Remove worker %s" % worker.get_name())
+        prettyprint.print_warning("Remove worker %s" % worker.get_name())
         worker.stop()
         print("--qsize", self.workers.qsize())
         
@@ -408,6 +421,9 @@ class WorkerSupervisor(Actor):
             # w.start()
 
     def receive(self, message):
+
+        # directory.remove_actor(self)
+
         # print(self.printer_actor)
         self.printer_actor.inbox.put({"text":'Receives work', "type":'normal'})
         # print("Receives work")
@@ -509,7 +525,7 @@ class WorkerSupervisor(Actor):
                 self.remove_worker()
                 self.remove_worker()
             else:
-                if(self.workers.qsize()>( self.demandWorkQueue.qsize()+ 2)):
+                if(self.workers.qsize()>( self.demandWorkQueue.qsize()+ 1)):
                     self.remove_worker()
             
         
@@ -520,6 +536,7 @@ class WorkerSupervisor(Actor):
 class Directory:
     def __init__(self):
         self.actors = {}
+        self.supervisor_restart_policy = SupervisorRestartPolicy()
 
     def add_actor(self, name, actor):
         self.actors[name] = actor
@@ -530,7 +547,24 @@ class Directory:
 
     # TODO
     # def remove_actor(self, name, actor):
-    #     gevent.kill(actor)
+    def remove_actor(self, actor):
+        gevent.kill(actor)
+
+    # def restart_actor(self, name):
+    def restart_supervisor(self, supervisor):
+        name = supervisor.get_name()
+
+        if name in self.actors:
+            supervisor_to_restart = self.actors[name]
+        
+        # new_supervisor = WorkerSupervisor(name)
+        new_supervisor = self.supervisor_restart_policy.restart(supervisor)
+
+        self.actors[name] = new_supervisor.get_name()
+        return new_supervisor
+
+
+
 
     # def restart_actor(self, name, actor):
     #     gevent.kill(actor)
