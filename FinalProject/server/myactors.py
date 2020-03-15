@@ -171,17 +171,19 @@ class Requestor(Actor):
 
 
 
-    def ack(self):
+    def ack(self, message):
         # print("\n !! Thanks worker !!\n")
         # prettyprint.print_success("\n !! Thanks worker !!\n")
         self.printer_actor.inbox.put({"text":"\n !! Thanks worker !!\n", "type":"success"})
+        self.printer_actor.inbox.put({"text":message, "type":"header"})
 
         # self.supervisor.inbox.put('Thanks!')
 
 
     def receive(self, message):
-        if message == "work done":
-            gevent.spawn(self.ack)
+        # if message == "work done":
+        if "PREDICTED_WEATHER:" in message:
+            gevent.spawn(self.ack(message))
         elif message == "start":
             self.printer_actor.inbox.put({"text":"Requestor starting...", "type":"header"})
             # print("Requestor starting...")
@@ -214,12 +216,19 @@ class Worker(Actor):
         self.printer_actor.inbox.put({"text":"I %s was told to process '%s' [%d]" %(self.name, message, self.inbox.qsize()), "type":"blue"})
 
 
-        # athm_pressure, humidity, light, temperature, wind_speed = aggregate_sensor_values(message)
+        athm_pressure, humidity, light, temperature, wind_speed = weather.aggregate_sensor_values(message)
+        # only for debug:
+        # print("ATHM PRESSURE:", athm_pressure)
+        predicted_weather = weather.predict_weather(athm_pressure, humidity, light, temperature, wind_speed)
+        # only for debug:
+        # print("---")
+        # print("PREDICT WEATHER:")
+        # print(predicted_weather)
 
         # print("I %s was told to process '%s' [%d]" %(self.name, message, self.inbox.qsize()))
         gevent.sleep(3)
         client = directory.get_actor("client")
-        client.inbox.put("work done")
+        client.inbox.put("PREDICTED_WEATHER:" + predicted_weather)
         self.state = States.Idle
 
 
