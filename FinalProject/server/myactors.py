@@ -1,56 +1,15 @@
-# Python actors using gevent libev.
-#
-# [gevent](http://www.gevent.org/index.html)
-# [libev](http://software.schmorp.de/pkg/libev.html)
-#
-# Jason Giedymin <jason g _at_ g mail dot com>
-#
-# This example serves as a simple play between four actors.
-#   - 2 Workers
-#   - 1 Supervisor
-#   - 1 Client
-#
-# The client begins by looking up in a directory of who the current
-# supervisor is. The supervisor is in charge of the two workers
-# for the purpose of sending them work. The workers each pull
-# from their mail box, does the work, and sends it to the client.
-# The workers deal directly to the client.
-#
-# Workers take 3 seconds to do work, and since there are only two
-# workers, with work being assigned every half second the
-# workers cannot catch up. Changing the pool of workers to 5 helps
-# meet the work demanded by the client, but not for long.
-#
-# The workers could have dealt directly with the supervisor, which
-# then in turn dealt with the client.
-#
-# The workers or supervisor (if the above was true) could also have
-# dealt with a directory actor, if one was created.
-#
-# The directory is global, meant for read-only after instantiation.
-#
-# To run this play, you will need to run the following:
-#     pip install -U greenlet
-#     pip install -U gevent
-#     pip install -U enum34
-#
-# Then simply run `python actors.py`.
-#
-
 import gevent
 from gevent.queue import Queue
 from enum import Enum
 from gevent import Greenlet
 import prettyprint
-
 from mysseclient import with_requests
 # from mysseclient import with_urllib3
 import json
-
 import sseclient
 import pprint
-
 import weather
+
 
 class States(Enum):
     Idle = 0
@@ -86,11 +45,7 @@ class Actor(gevent.Greenlet):
         self.state = States.Stopped
         self.running = False
         Greenlet.kill(self)
-
-    # def restart(self):
-    #     self.state = States.Running
-    #     self.running = True
-    
+ 
     def get_state(self):
         return self.state
 
@@ -98,27 +53,18 @@ class Actor(gevent.Greenlet):
         return self.name
 
 
-
-
-
 class Requestor(Actor):
     def __init__(self, name):
         Actor.__init__(self)
         self.name = name
-        self.state = States.Idle
-        
+        self.state = States.Idle        
         self.url = 'http://0.0.0.0:4000/iot'
-        # response = with_urllib3(url)  
         self.response = with_requests(self.url)
-
-        # self.supervisor_restart_policy = SupervisorRestartPolicy()
         self.printer_actor = PrinterActor("Requestor_printer")
         self.printer_actor.start()
 
 
     def loop(self):
-        # while True:
-            
         client = sseclient.SSEClient(self.response)
         for event in client.events():
 
@@ -131,7 +77,7 @@ class Requestor(Actor):
             # gevent.sleep(1)
             # gevent.sleep(0.2)
             gevent.sleep(0.5)
-            # print("...Requesting work...")
+
             self.printer_actor.inbox.put({"text":"...Requesting work...", "type":"warning"})
 
 
@@ -156,17 +102,14 @@ class Requestor(Actor):
                     # prettyprint.print_green("workers:" + str(self.supervisor.workers))
                     # prettyprint.print_green("workers:" + str(self.supervisor.workers.qsize()))
                 else:
-                    # print(json.loads(event.data))
-
 
                     self.printer_actor.inbox.put({"text":json.loads(event.data), "type":"pprint"})
-
+                    # for debug
                     # pprint.pprint(json.loads(event.data))
                     sensors_data = json.loads(event.data)["message"]
                     # print(sensors_data)
                     self.supervisor.inbox.put(sensors_data)
 
-            # print("----")
             self.printer_actor.inbox.put({"text":"----", "type":"blue"})
 
 
@@ -176,8 +119,6 @@ class Requestor(Actor):
         # prettyprint.print_success("\n !! Thanks worker !!\n")
         self.printer_actor.inbox.put({"text":"\n !! Thanks worker !!\n", "type":"success"})
         self.printer_actor.inbox.put({"text":message, "type":"header"})
-
-        # self.supervisor.inbox.put('Thanks!')
 
 
     def receive(self, message):
@@ -189,18 +130,6 @@ class Requestor(Actor):
             # print("Requestor starting...")
             self.supervisor = directory.get_actor('supervisor')
             gevent.spawn(self.loop)
-
-
-class WorkerRestartPolicy():
-    def restart_worker(self, current_worker):
-        name = current_worker.get_name()
-
-        worker_to_be_restarted = Worker(name)
-        worker_to_be_restarted.start()
-
-        current_worker.stop()
-        return worker_to_be_restarted
-        
 
 
 class Worker(Actor):
@@ -225,7 +154,6 @@ class Worker(Actor):
         # print("PREDICT WEATHER:")
         # print(predicted_weather)
 
-        # print("I %s was told to process '%s' [%d]" %(self.name, message, self.inbox.qsize()))
         gevent.sleep(3)
         client = directory.get_actor("client")
         client.inbox.put("PREDICTED_WEATHER:" + predicted_weather)
@@ -273,27 +201,6 @@ class PrinterActor(Actor):
 #       case _: Exception                => Escalate
 #     }
 
-
-class SupervisorRestartPolicy():
-    def restart(self, supervisor):
-        workers_children = []
-
-        while(not supervisor.workers.empty()):
-            worker = supervisor.workers.get()
-            new_worker = worker.get_name()
-            worker.stop()
-
-            workers_children.append(new_worker)
-
-        supervisor_name = supervisor.get_name()
-        supervisor.stop()
-
-        new_supervisor = WorkerSupervisor(supervisor_name, workers_array=workers_children)
-        new_supervisor.start()
-        return new_supervisor
-
-
-        
 
 class WorkerSupervisor(Actor):
 
@@ -486,6 +393,38 @@ class WorkerSupervisor(Actor):
                 # if(self.workers.qsize()>( self.demandWorkQueue.qsize()+ 2)):
                     # self.remove_worker()
             
+###############################
+# Restart Policies
+###############################
+class SupervisorRestartPolicy():
+    def restart(self, supervisor):
+        workers_children = []
+
+        while(not supervisor.workers.empty()):
+            worker = supervisor.workers.get()
+            new_worker = worker.get_name()
+            worker.stop()
+
+            workers_children.append(new_worker)
+
+        supervisor_name = supervisor.get_name()
+        supervisor.stop()
+
+        new_supervisor = WorkerSupervisor(supervisor_name, workers_array=workers_children)
+        new_supervisor.start()
+        return new_supervisor
+
+
+class WorkerRestartPolicy():
+    def restart_worker(self, current_worker):
+        name = current_worker.get_name()
+
+        worker_to_be_restarted = Worker(name)
+        worker_to_be_restarted.start()
+
+        current_worker.stop()
+        return worker_to_be_restarted
+        
 
 
 class Directory:
@@ -500,8 +439,6 @@ class Directory:
         if name in self.actors:
             return self.actors[name]
 
-    # TODO
-    # def remove_actor(self, name, actor):
     def remove_actor(self, actor):
         gevent.kill(actor)
 
@@ -520,16 +457,11 @@ class Directory:
 
 
 
-
     # def restart_actor(self, name, actor):
     #     gevent.kill(actor)
     #     gevent.joinall(new_actor)
 
-    # def restart_supervisor(self, supervisor):
 
-
-# ROuter sau RoundRobin Distributor
-# de facut restartPolicy separat
 # in caz ca eroare - trebuie policy de restartat supervisor si client  (requestor)
 class Pool(Actor):
     def __init__(self, n):
@@ -571,7 +503,6 @@ class Pool(Actor):
 #     requestor.inbox.put('start')
 
 #     # de ascuns in ceva abstract - sa nu se vada ca e gevent
-
 #     gevent.joinall([requestor, supervisor])
 
 
