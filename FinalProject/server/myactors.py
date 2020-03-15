@@ -288,6 +288,7 @@ class WorkerSupervisor(Actor):
             self.add_worker()    
             self.add_worker()    
             self.add_worker()    
+            self.add_worker()    
         
         self.printer_actor = PrinterActor("Supervisor_printer")
         self.printer_actor.start()
