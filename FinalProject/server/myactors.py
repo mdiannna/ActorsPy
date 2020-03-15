@@ -62,12 +62,13 @@ class Requestor(Actor):
         self.response = with_requests(self.url)
         self.printer_actor = PrinterActor("Requestor_printer")
         self.printer_actor.start()
-
+        self.cnt = 2
 
     def loop(self):
+
         client = sseclient.SSEClient(self.response)
         for event in client.events():
-
+            
             self.state = States.Running
             
             # only for debug
@@ -77,6 +78,8 @@ class Requestor(Actor):
             # gevent.sleep(1)
             # gevent.sleep(0.2)
             gevent.sleep(0.5)
+
+
 
             self.printer_actor.inbox.put({"text":"...Requesting work...", "type":"warning"})
 
@@ -131,6 +134,12 @@ class Requestor(Actor):
             self.supervisor = directory.get_actor('supervisor')
             gevent.spawn(self.loop)
 
+    def get_supervisor(self):
+        return self.supervisor
+
+    def get_printer_actor(self):
+        return self.printer_actor
+
 
 class Worker(Actor):
     def __init__(self, name):
@@ -158,6 +167,9 @@ class Worker(Actor):
         client = directory.get_actor("client")
         client.inbox.put("PREDICTED_WEATHER:" + predicted_weather)
         self.state = States.Idle
+
+    def get_printer_actor(self):
+        return self.printer_actor
 
 
 class PrinterActor(Actor):
@@ -263,8 +275,6 @@ class WorkerSupervisor(Actor):
         worker.stop()
         # only for debug
         # print("--qsize", self.workers.qsize())
-        
-
 
     def start(self):
         Actor.start(self)
@@ -318,9 +328,6 @@ class WorkerSupervisor(Actor):
 
         # current_actor = self.workers[index]
         # current_actor = current_worker
-
-
-
 
         # ////////////////
         # IF MESSAGE==PANIC
@@ -392,7 +399,9 @@ class WorkerSupervisor(Actor):
             # else:
                 # if(self.workers.qsize()>( self.demandWorkQueue.qsize()+ 2)):
                     # self.remove_worker()
-            
+
+    def get_printer_actor(self):
+        return self.printer_actor            
 ###############################
 # Restart Policies
 ###############################
@@ -424,7 +433,20 @@ class WorkerRestartPolicy():
 
         current_worker.stop()
         return worker_to_be_restarted
+
+
+class RequestorRestartPolicy():
+    def restart_requestor(self, requestor):
+        name = requestor.get_name()
+
+        requestor_to_be_restarted = Requestor(name)
+        requestor_to_be_restarted.start()
+        requestor_to_be_restarted.supervisor = requestor.get_supervisor
+        requestor_to_be_restarted.printer_actor = requestor.get_printer_actor
         
+        requestor.stop()
+
+        return requestor_to_be_restarted
 
 
 class Directory:
