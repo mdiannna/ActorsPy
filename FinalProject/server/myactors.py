@@ -50,6 +50,8 @@ import json
 import sseclient
 import pprint
 
+import weather
+
 class States(Enum):
     Idle = 0
     Stopped = 1
@@ -158,7 +160,7 @@ class Requestor(Actor):
 
 
                     self.printer_actor.inbox.put({"text":json.loads(event.data), "type":"pprint"})
-                    
+
                     # pprint.pprint(json.loads(event.data))
                     sensors_data = json.loads(event.data)["message"]
                     # print(sensors_data)
@@ -187,6 +189,18 @@ class Requestor(Actor):
             gevent.spawn(self.loop)
 
 
+class WorkerRestartPolicy():
+    def restart_worker(self, current_worker):
+        name = current_worker.get_name()
+
+        worker_to_be_restarted = Worker(name)
+        worker_to_be_restarted.start()
+
+        current_worker.stop()
+        return worker_to_be_restarted
+        
+
+
 class Worker(Actor):
     def __init__(self, name):
         Actor.__init__(self)
@@ -198,6 +212,9 @@ class Worker(Actor):
     def receive(self, message):
         self.state = States.Running
         self.printer_actor.inbox.put({"text":"I %s was told to process '%s' [%d]" %(self.name, message, self.inbox.qsize()), "type":"blue"})
+
+
+        # athm_pressure, humidity, light, temperature, wind_speed = aggregate_sensor_values(message)
 
         # print("I %s was told to process '%s' [%d]" %(self.name, message, self.inbox.qsize()))
         gevent.sleep(3)
@@ -278,6 +295,7 @@ class WorkerSupervisor(Actor):
         self.max_work_capacity = 10
         self.workers = Queue(maxsize=self.max_work_capacity)
         self.workers_cnt_id = 0
+        self.worker_restart_policy = WorkerRestartPolicy()
         
         if len(workers_array)>0:
             for worker_name in workers_array:
@@ -394,14 +412,20 @@ class WorkerSupervisor(Actor):
             # print("PANIC")
             self.printer_actor.inbox.put({"text":"!!! PANIC !!!", "type":'warning-bold'})
 
+
+            worker_to_be_restarted = self.worker_restart_policy.restart_worker(current_worker)
+            
             name = current_worker.get_name()
-
-            worker_to_be_restarted = Worker(name)
-            worker_to_be_restarted.start()
-
-            current_worker.stop()
-
+            # worker_to_be_restarted.inbox.put(message)
             self.printer_actor.inbox.put({"text":"--killed worker %s" % name, "type":'warning'})
+            self.workers.put(worker_to_be_restarted)
+            self.printer_actor.inbox.put({"text":"--restarted worker %s" %worker_to_be_restarted.get_name(), "type":'warning'})
+        
+            # worker_to_be_restarted = Worker(name)
+            # worker_to_be_restarted.start()
+
+            # current_worker.stop()
+
             # print("--killed worker %s" % name)
             
             # self.workers[index] = worker_to_be_restarted
@@ -410,11 +434,6 @@ class WorkerSupervisor(Actor):
             # print(self.workers[index])
             # # directory.add_actor("client", requestor)
 
-            self.workers.put(worker_to_be_restarted)
-            # worker_to_be_restarted.inbox.put(message)
-            self.printer_actor.inbox.put({"text":"--restarted worker %s" %worker_to_be_restarted.get_name(), "type":'warning'})
-            # print("--restarted worker %s" %worker_to_be_restarted.get_name())
-            # /////////////////////////////
         else:
             current_worker.inbox.put(message)
             self.workers.put(current_worker)
