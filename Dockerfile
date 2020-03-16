@@ -1,6 +1,7 @@
 # Dockerfile - this is a comment
 # https://medium.com/@doedotdev/docker-flask-a-simple-tutorial-bbcb2f4110b5
 
+# merge, dar da eroare de conexiune
 #FROM python:3.6.9
 #COPY . /app
 #WORKDIR /app
@@ -9,7 +10,6 @@
 #ENTRYPOINT ["python3"]
 #CMD ["app.py"]
 
-#FROM python:3.7-alpine
 FROM python:3.6.9
 WORKDIR /code
 ENV FLASK_APP app.py
