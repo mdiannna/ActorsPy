@@ -64,4 +64,4 @@ def testSSE():
 
 
 # run Flask app in debug mode
-app.run(debug=True)
+app.run(debug=True, host='0.0.0.0:5000')

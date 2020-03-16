@@ -69,9 +69,12 @@ def print_aggregated_values(athm_pressure, humidity, light, temperature, wind_sp
 	print("TEMPERATURE:", temperature)
 	print("WIND_SPEED: ", wind_speed)
 
+###########
+# EXAMPLE USAGE:
+###########
 
-athm_pressure, humidity, light, temperature, wind_speed = aggregate_sensor_values(data)
-print_aggregated_values(athm_pressure, humidity, light, temperature, wind_speed)
-print("---")
-print("PREDICT WEATHER:")
-print(predict_weather(athm_pressure, humidity, light, temperature, wind_speed))
+# athm_pressure, humidity, light, temperature, wind_speed = aggregate_sensor_values(data)
+# print_aggregated_values(athm_pressure, humidity, light, temperature, wind_speed)
+# print("---")
+# print("PREDICT WEATHER:")
+# print(predict_weather(athm_pressure, humidity, light, temperature, wind_speed))

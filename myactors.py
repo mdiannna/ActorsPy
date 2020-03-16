@@ -58,7 +58,8 @@ class Requestor(Actor):
         Actor.__init__(self)
         self.name = name
         self.state = States.Idle        
-        self.url = 'http://0.0.0.0:4000/iot'
+        # self.url = 'http://0.0.0.0:4000/iot'
+        self.url = 'http://127.0.0.1:4000/iot'
         self.response = with_requests(self.url)
         self.printer_actor = PrinterActor("Requestor_printer")
         self.printer_actor.start()
