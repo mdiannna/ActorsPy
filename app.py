@@ -7,9 +7,11 @@ import sseclient
 
 # import myactors
 from actors import myactors
-import prettyprint
+# import prettyprint
 import gevent
 from gevent.queue import Queue
+import requests
+import urllib3
 # from enum import Enum
 # from gevent import Greenlet
 
@@ -17,32 +19,44 @@ from gevent.queue import Queue
 app = Flask(__name__)
 app.secret_key = 'secret'
 
-def with_urllib3(url):
-    """Get a streaming response for the given event feed using urllib3."""
-    import urllib3
-    http = urllib3.PoolManager()
-    return http.request('GET', url, preload_content=False)
+# def with_urllib3(url):
+#     """Get a streaming response for the given event feed using urllib3."""
+#     http = urllib3.PoolManager()
+#     return http.request('GET', url, preload_content=False)
 
-def with_requests(url):
-    """Get a streaming response for the given event feed using requests."""
-    import requests
-    return requests.get(url, stream=True)
+# def with_requests(url):
+#     """Get a streaming response for the given event feed using requests."""
+#     return requests.get(url, stream=True)
 
 
+@app.route('/')
+def index():
+  return 'Hello!'
 
+@app.route('/help-iot')
+def helpIoT():
+  help_url = 'http://patr:4000/help'
+  r = requests.get(help_url)
+  return r.json()
 
 # Receive weather data from sensor from rtp-server
 @app.route('/receive-sse-sensor-data')
 def testSSE():
 
-  prettyprint.print_header("Program started")
+  # prettyprint.print_header("Program started")
 
-  directory = Directory()
-  # gevent.joinall([gevent.spawn(go)])
+  # directory = Directory()
+  # # gevent.joinall([gevent.spawn(go)])
+
+  # pool = myactors.Pool(10) # try 2, 3, 5, 8...
+  # gevent.joinall([gevent.spawn(pool.start)])
+
 
   pool = myactors.Pool(10) # try 2, 3, 5, 8...
   gevent.joinall([gevent.spawn(pool.start)])
+
   # -------------------
+
 
   # url = 'http://0.0.0.0:4000/iot'
   # # response = with_urllib3(url)  
@@ -65,4 +79,5 @@ def testSSE():
 
 
 # run Flask app in debug mode
-app.run(debug=True, host='0.0.0.0:5000')
+# app.run(debug=True, host='0.0.0.0:5000')
+app.run(debug=True, host='0.0.0.0')

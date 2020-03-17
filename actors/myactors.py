@@ -62,5 +62,5 @@ prettyprint.print_header("Program started")
 
 # gevent.joinall([gevent.spawn(go)])
 
-pool = Pool(10) # try 2, 3, 5, 8...
-gevent.joinall([gevent.spawn(pool.start)])
+# pool = Pool(10) # try 2, 3, 5, 8...
+# gevent.joinall([gevent.spawn(pool.start)])

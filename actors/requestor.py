@@ -22,7 +22,9 @@ class Requestor(Actor):
         
 
 
-        self.url = 'http://127.0.0.1:4000/iot'
+        # self.url = 'http://127.0.0.1:4000/iot'
+        gevent.sleep(4)
+        self.url = 'http://patr:4000/iot'
         try:
             self.response = with_requests(self.url)
             print("OK")
@@ -33,10 +35,11 @@ class Requestor(Actor):
         self.printer_actor = PrinterActor("Requestor_printer")
         self.printer_actor.start()
         self.cnt = 2
-            
+        # gevent.sleep(4)
 
         # Don't know why, but it throws error without this initial request
-        self.help_url = 'http://127.0.0.1:4000/help'
+        # self.help_url = 'http://127.0.0.1:4000/help'
+        self.help_url = 'http://patr:4000/help'
         r = requests.get(self.help_url)
         print(r.json())
         # gevent.sleep(2)

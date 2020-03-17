@@ -4,7 +4,11 @@ services:
     build: .
     ports:
       - "5000:5000"
+    command: bash -c "sleep 10 && flask run"
+    depends_on:
+      - patr
   patr:
     image: "alexburlacu/rtp-server"
+    container_name: patr
     ports:
       - "4000:4000"
