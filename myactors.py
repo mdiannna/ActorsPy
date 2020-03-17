@@ -20,10 +20,7 @@ class Requestor(Actor):
         self.state = States.Idle        
         # self.url = 'http://0.0.0.0:4000/iot'
         
-        self.help_url = 'http://127.0.0.1:4000/help'
-        r = requests.get(self.help_url)
-        print(r.json())
-        
+
 
         self.url = 'http://127.0.0.1:4000/iot'
         try:
@@ -38,6 +35,10 @@ class Requestor(Actor):
         self.cnt = 2
             
 
+        # Don't know why, but it throws error without this initial request
+        self.help_url = 'http://127.0.0.1:4000/help'
+        r = requests.get(self.help_url)
+        print(r.json())
         # gevent.sleep(2)
 
     def loop(self):
