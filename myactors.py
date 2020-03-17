@@ -9,49 +9,9 @@ import json
 import sseclient
 import pprint
 import weather
+import requests
 
-
-class States(Enum):
-    Idle = 0
-    Stopped = 1
-    Running = 2
-    Failed = 3
-
-class Work(Enum):
-    Event = 0
-    Misc = 1
-
-
-class Actor(gevent.Greenlet):
-
-    def __init__(self):
-        self.inbox = Queue()
-        Greenlet.__init__(self)
-
-    def receive(self, message):
-        raise NotImplemented("Be sure to implement this.")
-
-    def _run(self):
-        """
-        Upon calling run, begin to receive items from actor's inbox.
-        """
-        self.running = True
-
-        while self.running:
-            message = self.inbox.get()
-            self.receive(message)
-
-    def stop(self):
-        self.state = States.Stopped
-        self.running = False
-        Greenlet.kill(self)
- 
-    def get_state(self):
-        return self.state
-
-    def get_name(self):
-        return self.name
-
+from actors import Actor, States, Work
 
 class Requestor(Actor):
     def __init__(self, name):
@@ -60,10 +20,23 @@ class Requestor(Actor):
         self.state = States.Idle        
         # self.url = 'http://0.0.0.0:4000/iot'
         self.url = 'http://127.0.0.1:4000/iot'
-        self.response = with_requests(self.url)
+        try:
+            self.response = with_requests(self.url)
+            print("OK")
+        except:
+            print("EXCEPTION")
+            self.response = with_requests(self.url)
+            
         self.printer_actor = PrinterActor("Requestor_printer")
         self.printer_actor.start()
         self.cnt = 2
+            
+
+        # Don't know why, but it throws error without this initial request
+        self.help_url = 'http://127.0.0.1:4000/help'
+        r = requests.get(self.help_url)
+        print(r.json())
+        # gevent.sleep(2)
 
     def loop(self):
 

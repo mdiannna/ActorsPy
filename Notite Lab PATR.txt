@@ -1,0 +1,104 @@
+ docker pull alexburlacu/rtp-server
+ mix new starter_project --sup
+
+----------------
+- meniuri din linia de comanda
+- write in linia de comanda
+- se afiseaza parametrii de la sensori
+- umiditate, temp etc
+- CUI (command line UI)
+- spoate la urma de facut pagina web etc.
+- reload after 5 secunde (valoare media, etc)
+- log/storace - kafka sau de facut propriul log storage
+
+
+- Elixir - static supervisor si dinamic supervisor
+
+!!!!!!!!!!!! update la docker pull de facut!!!
+!!!!!!!!!!!! de facut tot ca container docker
+
+
+sudo docker run -p 4000 alexburlacu/rtp-server ?
+
+sudo docker run -p 4000 alexburlacu/rtp-server service nginx start ?
+________________
+
+sudo docker container run --publish 4000 --detach alexburlacu/rtp-server
+
+3987100a2b1475438dd24ac1c6aca981d172cae7097269968fba042887d33d66
+
+merge, dar nu afiseaza nimic
+------
+sudo docker container run --publish 4000:4000 --detach alexburlacu/rtp-server --name patr
+
+
+sudo docker container kill  c6e1baac54f8
+
+mdiannna@mdiannna:~$ sudo docker image rm alexburlacu/rtp-server -f
+
+
+
+https://docs.docker.com/get-started/part2/
+
+https://medium.com/@deepakshakya/beginners-guide-to-use-docker-build-run-push-and-pull-4a132c094d75
+
+
+
+de citit date:
+server send events api-
+sau cu tcp - cu get - api
+
+
+---------------------------------
+cum de rulat proiectul!
+
+sudo docker container run --publish 4000:4000 --detach --name patr alexburlacu/rtp-server 
+curl http://127.0.0.1:4000/iot
+
+din cod server:
+
+
+conn = put_resp_header("content-type", "text/event-stream")
+conn = send_chunked(conn, 200)
+
+time_scale = 5
+conn
+
+/help content-type: application/json
+
+/iot "content-type", "text/event-stream"
+
+de facut API in flask si din jquery/ javascript events SSE (send events)
+DynamicSupervisor
+
+
+event: "message"
+
+data: {"message": "{"temperature_sensor_1": -8.206025208504917,"temperature_sensor_2": 34.51570485045303,"humidity_sensor_1": 21.769473719505108,"humidity_sensor_2": 99.49931075277642,"wind_speed_sensor_1": 28.08677946194974,"wind_speed_sensor_2": 38.93717356046327,"atmo_pressure_sensor_1": 652.6809259008215,"atmo_pressure_sensor_2": 721.4824120045464,"light_sensor_1": 186.0,"light_sensor_2": 94.0,"unix_timestamp_us": 1582785376775624}"}
+
+https://pusher.com/tutorials/activity-feed-flask
+
+
+akka - de uitat in java cum ii facut!!!
+
+
+
+----
+https://stackoverflow.com/questions/12232304/how-to-implement-server-push-in-flask-framework
+https://gist.github.com/jelmervdl/5a9861f7298907179c20a54c0e154560
+
+
+https://medium.com/code-zen/python-generator-and-html-server-sent-events-3cdf14140e56
+
+
+
+
+https://github.com/singingwolfboy/flask-sse  +++ good
+
+
+-------------------------------------
+docker
+$ sudo docker container run --publish 4000:4000 --detach --name patr alexburlacu/rtp-server 
+$ docker container stop ID
+$ docker container rm ID
+
