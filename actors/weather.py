@@ -39,7 +39,7 @@ def predict_weather(athm_pressure, humidity, light, temperature, wind_speed):
 	if temperature < -2 and light > 128 and athm_pressure < 680:
 		return "WET_SNOW"
 	if temperature < -8:
-		return SNOW
+		return 'SNOW'
 	if temperature < -15 and wind_speed > 45:
 		return "BLIZZARD"
 	if temperature > 0 and athm_pressure < 710 and humidity > 70 and wind_speed < 20:

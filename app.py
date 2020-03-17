@@ -5,7 +5,8 @@ import json
 import pprint
 import sseclient
 
-import myactors
+# import myactors
+from actors import myactors
 import prettyprint
 import gevent
 from gevent.queue import Queue
