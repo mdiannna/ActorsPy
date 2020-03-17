@@ -11,6 +11,8 @@ from gevent import Greenlet
 import json
 import requests
 import sseclient
+import os
+# from app import app
 
 class Requestor(Actor):
     def __init__(self, name, directory):
@@ -24,7 +26,10 @@ class Requestor(Actor):
 
         # self.url = 'http://127.0.0.1:4000/iot'
         gevent.sleep(4)
-        self.url = 'http://patr:4000/iot'
+        # self.url = 'http://patr:4000/iot'
+
+        # self.url = app.config['EVENTS_SERVER_URL'] + '/iot'
+        self.url = os.getenv('EVENTS_SERVER_URL') + '/iot'
         try:
             self.response = with_requests(self.url)
             print("OK")
@@ -39,7 +44,8 @@ class Requestor(Actor):
 
         # Don't know why, but it throws error without this initial request
         # self.help_url = 'http://127.0.0.1:4000/help'
-        self.help_url = 'http://patr:4000/help'
+        # self.help_url = 'http://patr:4000/help'
+        self.help_url = app.config['EVENTS_SERVER_URL'] + '/help'
         r = requests.get(self.help_url)
         print(r.json())
         # gevent.sleep(2)

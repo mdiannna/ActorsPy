@@ -12,6 +12,8 @@ import gevent
 from gevent.queue import Queue
 import requests
 import urllib3
+import os
+
 # from enum import Enum
 # from gevent import Greenlet
 
@@ -35,7 +37,8 @@ def index():
 
 @app.route('/help-iot')
 def helpIoT():
-  help_url = 'http://patr:4000/help'
+  # help_url = app.config['EVENTS_SERVER_URL'] + '/help'
+  help_url = os.getenv('EVENTS_SERVER_URL')  + '/help'
   r = requests.get(help_url)
   return r.json()
 
@@ -80,4 +83,8 @@ def testSSE():
 
 # run Flask app in debug mode
 # app.run(debug=True, host='0.0.0.0:5000')
+
+# app.config['EVENTS_SERVER_URL'] = 'http://patr:4000'
+os.environ['EVENTS_SERVER_URL'] = 'http://127.0.0.1:4000'
+# app.config['EVENTS_SERVER_URL'] = 'http://127.0.0.1:4000'
 app.run(debug=True, host='0.0.0.0')
