@@ -102,3 +102,5 @@ $ sudo docker container run --publish 4000:4000 --detach --name patr alexburlacu
 $ docker container stop ID
 $ docker container rm ID
 
+remove image:
+$ sudo docker image rm alexburlacu/rtp-server -f
