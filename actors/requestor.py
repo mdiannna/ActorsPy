@@ -106,8 +106,14 @@ class Requestor(Actor):
                 # for debug
                 # pprint.pprint(json.loads(event.data))
                 sensors_data = json.loads(event.data)["message"]
+                self.last_sensors_data = sensors_data
+
                 # print(sensors_data)
                 self.supervisor.inbox.put(sensors_data)
+
+                # self.web_actor.inbox.put("DATA:"+sensors_data)
+                # self.web_actor.inbox.put("DATA:" + str(sensors_data))
+
 
             self.printer_actor.inbox.put({"text":"----", "type":"blue"})
 
@@ -124,6 +130,8 @@ class Requestor(Actor):
         # self.printer_actor.inbox.put({"text": "FINAL RESULT AGGREGATED:", "type":"green_header"})
         self.printer_actor.inbox.put({"text":message, "type":"green_header"})
         self.web_actor.inbox.put(message)
+        self.web_actor.inbox.put("DATA:" + str(self.last_sensors_data))
+
 
     def receive(self, message):
         # if message == "work done":
