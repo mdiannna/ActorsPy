@@ -21,7 +21,7 @@ class Requestor(Actor):
         self.directory = directory
         self.name = name
         self.state = States.Idle        
-        self.aggregator_actor = Aggregator("Aggregator actor")
+        self.aggregator_actor = Aggregator("Aggregator actor", self)
         self.aggregator_actor.start()
   
         # self.url = 'http://0.0.0.0:4000/iot'
@@ -116,10 +116,15 @@ class Requestor(Actor):
         self.printer_actor.inbox.put({"text":message, "type":"header"})
         self.aggregator_actor.inbox.put(message)
 
+    def show_final_result(self, message):
+        self.printer_actor.inbox.put({"text": "FINAL RESULT AGGREGATED:", "type":"green_header"})
+        self.printer_actor.inbox.put({"text":message, "type":"green_header"})
 
     def receive(self, message):
         # if message == "work done":
-        if "PREDICTED_WEATHER:" in message:
+        if "PREDICTED_WEATHER_FINAL:" in message:
+            gevent.spawn(self.show_final_result(message))
+        elif "PREDICTED_WEATHER:" in message:
             gevent.spawn(self.ack(message))
         elif message == "start":
             self.printer_actor.inbox.put({"text":"Requestor starting...", "type":"header"})
