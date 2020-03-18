@@ -4,10 +4,11 @@ import uuid
 import json
 import pprint
 import sseclient
+from actors.aggregator import Aggregator
 
 # import myactors
 from actors import myactors
-# import prettyprint
+from actors import prettyprint
 import gevent
 from gevent.queue import Queue
 import requests
@@ -34,6 +35,21 @@ app.secret_key = 'secret'
 @app.route('/')
 def index():
   return 'Hello!'
+
+# TEST AGGREGATOR
+import random
+@app.route('/test-aggregator')
+def testAggregator():
+  aggregator_actor = Aggregator("Aggregator actor")
+  aggregator_actor.start()
+  aggregator_actor.inbox.put("Hello")
+  PREDICTION_OPTIONS = ["SNOW", "CLOUD", "BLIZARD", "JUST_A_NORMAL_DAY", "SUN"]
+  for i in range(1, 100):
+    aggregator_actor.inbox.put("PREDICTED_WEATHER:" + random.choice(PREDICTION_OPTIONS))
+    gevent.sleep(1)
+  return "dore aggregator"
+
+
 
 @app.route('/help-iot')
 def helpIoT():
@@ -85,6 +101,14 @@ def testSSE():
 # app.run(debug=True, host='0.0.0.0:5000')
 
 # app.config['EVENTS_SERVER_URL'] = 'http://patr:4000'
-os.environ['EVENTS_SERVER_URL'] = 'http://127.0.0.1:4000'
+# os.environ['EVENTS_SERVER_URL'] = 'http://patr:4000'
+# os.environ['EVENTS_SERVER_URL'] = 'http://127.0.0.1:4000'
+os.environ['EVENTS_SERVER_URL'] = 'http://0.0.0.0:4000'
 # app.config['EVENTS_SERVER_URL'] = 'http://127.0.0.1:4000'
-app.run(debug=True, host='0.0.0.0')
+
+
+
+if __name__ == "__main__":
+  app.run(debug=True, host='0.0.0.0')
+
+  

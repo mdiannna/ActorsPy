@@ -16,6 +16,7 @@ class WorkerSupervisor(Actor):
         self.worker_restart_policy = WorkerRestartPolicy()
         self.printer_actor = PrinterActor("Supervisor_printer")
         self.printer_actor.start()
+  
         self.directory = directory
 
 

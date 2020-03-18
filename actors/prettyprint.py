@@ -21,6 +21,9 @@ def print_blue(text):
 
 def print_green(text):
 	print(bcolors.OKGREEN + str(text) + bcolors.ENDC)
+	
+def green(text):
+	return bcolors.OKGREEN + str(text) + bcolors.ENDC
 
 def print_success(text):
 	print(bcolors.OKGREEN + str(text) + bcolors.ENDC)

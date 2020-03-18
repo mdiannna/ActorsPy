@@ -29,6 +29,8 @@ class PrinterActor(Actor):
             prettyprint.print_underline(message["text"])
         if message["type"]=="header":
             prettyprint.print_header(message["text"])
+        if message["type"]=="green_header":
+            prettyprint.print_header(prettyprint.green(message["text"]))
         if(message["type"]=="pprint"):
             print("!!!")
             pprint.pprint(message["text"]["message"])

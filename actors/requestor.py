@@ -1,6 +1,7 @@
 from .printeractor import PrinterActor
 from .actors import Actor, States, Work
 from .mysseclient import with_requests
+from .aggregator import Aggregator
 from .mysseclient import with_urllib3
 import requests
 from .directory import Directory
@@ -20,6 +21,9 @@ class Requestor(Actor):
         self.directory = directory
         self.name = name
         self.state = States.Idle        
+        self.aggregator_actor = Aggregator("Aggregator actor")
+        self.aggregator_actor.start()
+  
         # self.url = 'http://0.0.0.0:4000/iot'
         
 
@@ -45,7 +49,9 @@ class Requestor(Actor):
         # Don't know why, but it throws error without this initial request
         # self.help_url = 'http://127.0.0.1:4000/help'
         # self.help_url = 'http://patr:4000/help'
-        self.help_url = app.config['EVENTS_SERVER_URL'] + '/help'
+        # self.help_url = app.config['EVENTS_SERVER_URL'] + '/help'
+        self.help_url = os.getenv('EVENTS_SERVER_URL') + '/help'
+
         r = requests.get(self.help_url)
         print(r.json())
         # gevent.sleep(2)
@@ -108,6 +114,7 @@ class Requestor(Actor):
         # prettyprint.print_success("\n !! Thanks worker !!\n")
         self.printer_actor.inbox.put({"text":"\n !! Thanks worker !!\n", "type":"success"})
         self.printer_actor.inbox.put({"text":message, "type":"header"})
+        self.aggregator_actor.inbox.put(message)
 
 
     def receive(self, message):
