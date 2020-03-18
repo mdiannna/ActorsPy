@@ -117,7 +117,7 @@ class Requestor(Actor):
         self.aggregator_actor.inbox.put(message)
 
     def show_final_result(self, message):
-        self.printer_actor.inbox.put({"text": "FINAL RESULT AGGREGATED:", "type":"green_header"})
+        # self.printer_actor.inbox.put({"text": "FINAL RESULT AGGREGATED:", "type":"green_header"})
         self.printer_actor.inbox.put({"text":message, "type":"green_header"})
 
     def receive(self, message):

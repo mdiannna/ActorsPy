@@ -32,28 +32,24 @@ class Aggregator(Actor):
 
     def receive(self, message):
         # print("Received message:" + message)
-        self.printer_actor.inbox.put({"text":"Received message:" + message, "type":"warning"})
+        # self.printer_actor.inbox.put({"text":"Received message:" + message, "type":"warning"})
         self.state = States.Running
 
         self.current_time = time.time()
-        print("current_time", self.current_time)
+        # print("current_time", self.current_time)
 
         if(self.current_time - self.last_time >= self.DELAY_TIME ):
-            print("TIME_TO_PRINT_PREDICTION")
-            self.printer_actor.inbox.put({"text":"TIME_TO_PRINT_PREDICTION", "type":"error"})
-            print("!!!!!!!!", self.predictions)
-
+            
             if(len(self.predictions)>0):
-
                 # self.aggregate_all_predictions(self.predictions.copy())
                 predicted_weather = self.aggregate_all_predictions(copy.copy(self.predictions))
                 requestor = self.get_requestor()
                 requestor.inbox.put("PREDICTED_WEATHER_FINAL:" + predicted_weather)
+                
             self.reinit()
             self.last_time = self.current_time
  
-        ############################################
-        # Exemplu
+
         # Valori posibile
         # 'SNOW'
         # "WET_SNOW"
@@ -73,22 +69,18 @@ class Aggregator(Actor):
         prediction = prediction.replace("PREDICTED_WEATHER:", "")
         self.predictions.append(prediction)
 
-
-        #####################################
-        # TODO DIANA:
-        
         self.state = States.Idle
 
 
 
     def aggregate_all_predictions(self, predictions):
-        # predictions este o lista de tip ["SNOW", "SUN", "CLOUD", "CLOUD", "SUN"]
-        # TODO: correct result calculated from predictions
-        print("PREDICTIONS:")
-        print(predictions)
+        # For debug:
+        # print(predictions)
+        # self.printer_actor.inbox.put({"text":predictions, "type":"warning"})
+
         # result = predictions[0]
         result = most_frequent(predictions)
-        self.print_result(result)
+        # self.print_result(result)
         return result
     
     def get_printer_actor(self):
@@ -99,3 +91,9 @@ class Aggregator(Actor):
 
     def get_requestor(self):
         return self.requestor
+
+    def set_delay_time(self, new_delay_time):
+        self.DELAY_TIME = new_delay_time
+
+    def get_delay_time(self):
+        return self.DELAY_TIME
