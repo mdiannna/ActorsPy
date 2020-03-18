@@ -378,10 +378,30 @@ source.addEventListener('greeting', function(event) {
 		}
 
 
+		// TODO: add correct images depending on prediction
 		var images = {
-  			FirstName: "Chris",
- 		}
+			"BLIZZARD": "img/weather/blizzard.jpg",
+			"CLOUDY": "img/weather/cloudy.gif",
+			"CONVECTION_OVEN": "img/weather/convection_oven.gif",
+			"HOT": "img/weather/hot_weather.gif",
+			"MONSOON": "img/weather/monsoon.gif",
+			"SLIGHT_BREEZE": "img/weather/slight_breeze.gif",
+			"HEAVY_RAIN": "img/weather/heavy_rain.gif",
+			"SLIGHT_RAIN": "img/weather/slight_rain.gif",
+			"SNOW": "img/weather/snow.gif",
+			"WET_SNOW": "img/weather/wet_snow.png",
+			"WARM":  "img/weather/sun.gif",
 
+		};
+
+
+		var updateImageByPrediction(msg_prediction) {
+			str1 = "PREDICTED_WEATHER_FINAL:";
+			prediction = data.substring(data.search(str1) + str1.length;
+			// TODO : set correct image dependinf on prediction 
+		}
+
+// Example data:
 // DATA:{'temperature_sensor_1': 37.50007411204504, 'temperature_sensor_2': 37.93698542411816, 'humidity_sensor_1': 3.391986182278761, 'humidity_sensor_2': 77.30193685569708, 'wind_speed_sensor_1': 39.207535688033616, 'wind_speed_sensor_2': 6.508800798411962, 'atmo_pressure_sensor_1': 654.988654809006, 'atmo_pressure_sensor_2': 736.0517462030361, 'light_sensor_1': 176.0, 'light_sensor_2': 125.0, 'unix_timestamp_us': 1584557664076949}
 </script>
 </body>
