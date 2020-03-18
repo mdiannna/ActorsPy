@@ -4,8 +4,8 @@ import pprint
 
 class PrinterActor(Actor):
     def __init__(self, name):
-        
-        Actor.__init__(self)
+        # Actor.__init__(self)
+        super().__init__()
         self.name = name
         self.state = States.Idle
 

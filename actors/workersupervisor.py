@@ -7,7 +7,8 @@ from .printeractor import PrinterActor
 class WorkerSupervisor(Actor):
 
     def __init__(self, name, directory, workers_array=[]):
-        Actor.__init__(self)
+        # Actor.__init__(self)
+        super().__init__()
         self.name = name
         self.state = States.Idle
         self.max_work_capacity = 10

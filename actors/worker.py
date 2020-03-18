@@ -5,7 +5,8 @@ import gevent
 
 class Worker(Actor):
     def __init__(self, name, directory):
-        Actor.__init__(self)
+        # Actor.__init__(self)
+        super().__init__()
         self.name = name
         self.state = States.Idle
         self.printer_actor = PrinterActor("Worker_printer")

@@ -17,7 +17,8 @@ import os
 
 class Requestor(Actor):
     def __init__(self, name, directory):
-        Actor.__init__(self)
+        # Actor.__init__(self)
+        super().__init__()
         self.directory = directory
         self.name = name
         self.state = States.Idle        

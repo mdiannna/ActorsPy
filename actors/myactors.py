@@ -29,7 +29,8 @@ from .workersupervisor import WorkerSupervisor
 # in caz ca eroare - trebuie policy de restartat supervisor si client  (requestor)
 class Pool(Actor):
     def __init__(self, n):
-        Actor.__init__(self)
+        # Actor.__init__(self)
+        super().__init__()
         directory = Directory()
 
         self.supervisor = WorkerSupervisor("Supervisor", directory)
