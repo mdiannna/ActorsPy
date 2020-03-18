@@ -16,3 +16,5 @@ Tutorial:
 
 sau de mutat in index mai intii request la receive data, pe urma de citit eventuri?
 
+- TODO: de schimbat poza
+
