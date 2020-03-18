@@ -120,10 +120,16 @@ Doesn't work:
 
 --------------------
 TODO:
-- aggregator actor
-- clean comments everywhere
-- Actor.__init__(self) mai bine cu super().__init__(). Is self necessary?
-- use docker-compose depends_on and remove sleep
-- if(event.data=='restart_supervisor'): you don't have restart events and requestor shouldn't bother about restarring the supervisor
++ - aggregator actor
++ - Actor.__init__(self) mai bine cu super().__init__(). Is self necessary?
+
+!!- if(event.data=='restart_supervisor'): you don't have restart events and requestor shouldn't bother about restarring the supervisor
 - Suggestion: have a common restart policy class and as subclasses concrete restart policies. Even better, decouple restart policy from the actor it will be applied to
+
+-- de la mine - citit elixir docs & restart actors cind dau eroare
+
 - try to make the worker supervisor a bit cleaner. Have lots of small functions, even if they are used just once. It will help readability
+
+
+- clean comments everywhere
+?? - use docker-compose depends_on and remove sleep
