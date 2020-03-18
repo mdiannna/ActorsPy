@@ -114,9 +114,30 @@ Works:
 1. $ sudo docker container run --publish 4000:4000 --detach alexburlacu/rtp-server 
 2. $ curl http://127.0.0.1:4000/iot
 3.  $ python3 app.py 
+-----
 
-Doesn't work:
-- $ docker-compose up
+
+Restart policy???
+
+# def one: SupervisorStrategy = {
+#     OneForOneStrategy(maxNrOfRetries = 5, withinTimeRange = 10 seconds) {
+#       case _: ArithmeticException => Resume
+#       case _: NullPointerException => Restart
+#       case _: IllegalArgumentException => Stop
+#       case _: Exception => Escalate
+#     }
+#   }
+
+# https://doc.akka.io//docs/akka/2.3/general/supervision.html#What_Restarting_Means
+# 1.suspend the actor (which means that it will not process normal messages until resumed), and recursively suspend all children
+# 2.call the old instance’s preRestart hook (defaults to sending termination requests to all children and calling postStop)
+# 3.wait for all children which were requested to terminate (using context.stop()) during preRestart to actually terminate; this—like all actor operations—is non-blocking, the termination notice from the last killed child will effect the progression to the next step
+# 4,create new actor instance by invoking the originally provided factory again
+# 5,invoke postRestart on the new instance (which by default also calls preStart)
+# 6,send restart request to all children which were not killed in step 3; restarted children will follow the same process recursively, from step 2
+# 7.resume the actor
+
+
 
 --------------------
 TODO:

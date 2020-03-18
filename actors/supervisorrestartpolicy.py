@@ -3,8 +3,9 @@ from .actors import Actor, States, Work
 from .workersupervisor import WorkerSupervisor
 # from requestor import Requestor
 
+
 ###############################
-# Restart Policies
+# Supervisor Restart Policy
 ###############################
 class SupervisorRestartPolicy():
     def restart(self, supervisor):

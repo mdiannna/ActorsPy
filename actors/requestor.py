@@ -83,28 +83,28 @@ class Requestor(Actor):
               self.printer_actor.inbox.put({"text":" PANIC  ", "type":"error"})
               self.supervisor.inbox.put('PANIC')
             else:
-                if(event.data=='restart_supervisor'):
-                    self.printer_actor.inbox.put({"text":" !!!Restart Supervisor!!! ", "type":"error"})
+                # if(event.data=='restart_supervisor'):
+                #     self.printer_actor.inbox.put({"text":" !!!Restart Supervisor!!! ", "type":"error"})
 
-                    # only for debug
-                    # prettyprint.print_blue("Supervisorr:" + str(self.supervisor.get_name()))
+                #     # only for debug
+                #     # prettyprint.print_blue("Supervisorr:" + str(self.supervisor.get_name()))
 
-                    supervisor = directory.restart_supervisor(self.supervisor)
+                #     supervisor = directory.restart_supervisor(self.supervisor)
 
-                    # self.supervisor = directory.get_actor('supervisor')
-                    self.supervisor = supervisor
-                    # Only for debug
-                    # prettyprint.print_green("Supervisor:" + str(self.supervisor.get_name()))
-                    # prettyprint.print_green("workers:" + str(self.supervisor.workers))
-                    # prettyprint.print_green("workers:" + str(self.supervisor.workers.qsize()))
-                else:
+                #     # self.supervisor = directory.get_actor('supervisor')
+                #     self.supervisor = supervisor
+                #     # Only for debug
+                #     # prettyprint.print_green("Supervisor:" + str(self.supervisor.get_name()))
+                #     # prettyprint.print_green("workers:" + str(self.supervisor.workers))
+                #     # prettyprint.print_green("workers:" + str(self.supervisor.workers.qsize()))
+                # else:
 
-                    self.printer_actor.inbox.put({"text":json.loads(event.data), "type":"pprint"})
-                    # for debug
-                    # pprint.pprint(json.loads(event.data))
-                    sensors_data = json.loads(event.data)["message"]
-                    # print(sensors_data)
-                    self.supervisor.inbox.put(sensors_data)
+                self.printer_actor.inbox.put({"text":json.loads(event.data), "type":"pprint"})
+                # for debug
+                # pprint.pprint(json.loads(event.data))
+                sensors_data = json.loads(event.data)["message"]
+                # print(sensors_data)
+                self.supervisor.inbox.put(sensors_data)
 
             self.printer_actor.inbox.put({"text":"----", "type":"blue"})
 
