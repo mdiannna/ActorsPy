@@ -33,9 +33,14 @@ def create_app():
 app = create_app()
 
 
+
+# @app.route('/test-receive-events')
+# def test_receive_events():
+#   return render_template('test_receive_events.html')
+
 @app.route('/')
 def index():
-  return 'Hello!'
+  return render_template('test_receive_events.html')
 
 
 @app.route('/send/<message>')
@@ -44,10 +49,6 @@ def send_message(message):
       sse.publish({"message": message}, type='greeting')
       gevent.sleep(2)
     return "Message sent!"
-
-@app.route('/test-receive-events')
-def test_receive_events():
-  return render_template('test_receive_events.html')
 
 
 @app.route('/help-iot')

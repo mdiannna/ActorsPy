@@ -20,7 +20,7 @@ class Aggregator(Actor):
         # self.directory = directory
         self.reinit()
         # 4 sec delay
-        self.DELAY_TIME = 5
+        self.DELAY_TIME = 7
         print("Aggregator init")
 
     def start(self):

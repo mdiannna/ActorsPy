@@ -1,1 +1,10 @@
 /* your styles go here */
+
+.number {
+	font-size: 18px !important;
+}
+
+
+.statistic-block .number {
+	font-size: 18px !important;
+}

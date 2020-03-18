@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+	
+	</title>
+</head>
+<body>
+	<h2>Parameters</h2>
+		<div id="light">L: </div>
+		<div id="temp">T: </div>
+		<div id="humidity">H: </div>
+		<div id="atm_pressure">AP: </div>
+		<div id="wind">W: </div>
+		<div id="timestamp">TS: </div>
+
+	<script type="text/javascript">
+		var data = "DATA:{'temperature_sensor_1': 37.50007411204504, 'temperature_sensor_2': 37.93698542411816, 'humidity_sensor_1': 3.391986182278761, 'humidity_sensor_2': 77.30193685569708, 'wind_speed_sensor_1': 39.207535688033616, 'wind_speed_sensor_2': 6.508800798411962, 'atmo_pressure_sensor_1': 654.988654809006, 'atmo_pressure_sensor_2': 736.0517462030361, 'light_sensor_1': 176.0, 'light_sensor_2': 125.0, 'unix_timestamp_us': 1584557664076949}";
+
+
+		function setSensorData(data) {
+			str1 = "temperature_sensor_1': ";
+			temp1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+			str1 = "temperature_sensor_2': ";
+			temp2 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+
+
+
+			document.getElementById("temp").innerHTML = "<p>" + temp1 + "/" + temp2 + "</p>";
+		}
+
+		setSensorData(data);
+
+	</script>
+
+</body>
+</html>

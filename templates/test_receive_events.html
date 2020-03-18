@@ -27,6 +27,11 @@
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <style type="text/css">
+		.statistic-block .number {
+			font-size: 18px !important;
+		}
+    </style>
   </head>
   <body>
     <header class="header">   
@@ -76,8 +81,8 @@
         </div>
         <section class="no-padding-top no-padding-bottom">
           <div class="container-fluid">
-            <div class="row">
-                Last update: 15.02.2020 22:33
+            <div class="row" id="lastUpdateDiv">
+                <!-- Last update: 15.02.2020 22:33 -->
             </div>
 
             <div class="row">
@@ -87,7 +92,7 @@
                     <div class="title">
                       <div class="icon"><i class="fa fa-sun-o"></i></div><strong>Light</strong>
                     </div>
-                    <div class="number dashtext-1">27</div>
+                    <div class="number dashtext-1" id="light">0/0</div>
                   </div>
                   <div class="progress progress-template">
                     <div role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-1"></div>
@@ -100,7 +105,7 @@
                     <div class="title">
                       <div class="icon"><i class="fa fa-umbrella"></i></div><strong>Humidity</strong>
                     </div>
-                    <div class="number dashtext-2">375</div>
+                    <div class="number dashtext-2" id="humidity">0/0</div>
                   </div>
                   <div class="progress progress-template">
                     <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-2"></div>
@@ -113,7 +118,7 @@
                     <div class="title">
                       <div class="icon"><i class="fa fa-thermometer"></i></div><strong>Temperature</strong>
                     </div>
-                    <div class="number dashtext-3">140</div>
+                    <div class="number dashtext-3" id="temp">0/0</div>
                   </div>
                   <div class="progress progress-template">
                     <div role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-3"></div>
@@ -126,7 +131,7 @@
                     <div class="title">
                       <div class="icon"><i class="fa fa-reorder"></i></div><strong>Wind speed</strong>
                     </div>
-                    <div class="number dashtext-4">41</div>
+                    <div class="number dashtext-4" id="wind">0/0</div>
                   </div>
                   <div class="progress progress-template">
                     <div role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-4"></div>
@@ -135,26 +140,29 @@
               </div>
             </div>
             <div class="row">
+            	<div class="col-md-3 col-sm-6">
+              </div>
               <div class="col-md-3 col-sm-6">
                 <div class="statistic-block block">
                   <div class="progress-details d-flex align-items-end justify-content-between">
                     <div class="title">
-                      <div class="icon"><i class="fa fa-reorder"></i></div><strong>Wind speed</strong>
+                      <div class="icon"><i class="fa fa-reorder"></i></div><strong>Atm. pressure</strong>
                     </div>
-                    <div class="number dashtext-4">41</div>
+                    <div class="number dashtext-4" id="atm-pressure">0/0</div>
                   </div>
                   <div class="progress progress-template">
                     <div role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-4"></div>
                   </div>
                 </div>
               </div>
+
               <div class="col-md-3 col-sm-6">
                 <div class="statistic-block block">
                   <div class="progress-details d-flex align-items-end justify-content-between">
                     <div class="title">
-                      <div class="icon"><i class="fa fa-thermometer"></i></div><strong>Temperature</strong>
+                      <div class="icon"><i class="fa fa-thermometer"></i></div><strong>Timestamp</strong>
                     </div>
-                    <div class="number dashtext-3">140</div>
+                    <div class="number dashtext-3" id="timestamp">0</div>
                   </div>
                   <div class="progress progress-template">
                     <div role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-3"></div>
@@ -162,7 +170,7 @@
                 </div>
               </div>
               
-              <div class="col-md-3 col-sm-6">
+              <!-- <div class="col-md-3 col-sm-6">
                 <div class="statistic-block block">
                   <div class="progress-details d-flex align-items-end justify-content-between">
                     <div class="title">
@@ -188,7 +196,7 @@
                   </div>
                 </div>
               </div>
-              
+               -->
             </div>
           </div>
         </section>
@@ -213,7 +221,7 @@
                 </div> -->
                 </div>
 
-                  <div class="block">
+                  <!-- <div class="block">
                   <form >
                     <label>Select update time</label>
                     <select name="account" class="form-control mb-3 mb-3">
@@ -227,23 +235,12 @@
                           </select>
                           <button type="submit">ok</button>
                   </form>
-              </div>
+              </div> -->
               
 
               </div>
+             
               <div class="col-lg-8">
-                <div class="line-cahrt block">
-                  <canvas id="lineCahrt"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="no-padding-bottom">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-lg-6">
                 <div class="checklist-block block">
                   <div class="title"><strong>Incoming data</strong></div>
                   <div id="incoming-data">
@@ -251,33 +248,8 @@
                   </div>
                 </div>
               </div>
-              <div class="col-lg-6">                                           
-                <div class="messages-block block">
-                  <div class="title"><strong>Workers status</strong></div>
-                  <div class="messages"><a href="#" class="message d-flex align-items-center">
-                      <div class="profile"><img src="img/avatar-3.jpg" alt="..." class="img-fluid">
-                        <div class="status online"></div>
-                      </div>
-                      <div class="content">   <strong class="d-block">Nadia Halsey</strong><span class="d-block">Status:running</span><small class="date d-block">9:30am</small></div></a><a href="#" class="message d-flex align-items-center">
-                      <div class="profile"><img src="img/avatar-2.jpg" alt="..." class="img-fluid">
-                        <div class="status away"></div>
-                      </div>
-                      <div class="content">   <strong class="d-block">Peter Ramsy</strong><span class="d-block">Status:stopped</span><small class="date d-block">7:40am</small></div></a><a href="#" class="message d-flex align-items-center">
-                      <div class="profile"><img src="img/avatar-1.jpg" alt="..." class="img-fluid">
-                        <div class="status busy"></div>
-                      </div>
-                      <div class="content">   <strong class="d-block">Sam Kaheil</strong><span class="d-block">Status:running</span><small class="date d-block">6:55am</small></div></a><a href="#" class="message d-flex align-items-center">
-                      <div class="profile"><img src="img/avatar-5.jpg" alt="..." class="img-fluid">
-                        <div class="status offline"></div>
-                      </div>
-                      <div class="content">   <strong class="d-block">Sara Wood</strong><span class="d-block">Status:running</span><small class="date d-block">10:30pm</small></div></a><a href="#" class="message d-flex align-items-center">
-                      <div class="profile"><img src="img/avatar-1.jpg" alt="..." class="img-fluid">
-                        <div class="status online"></div>
-                      </div>
-                      <div class="content">   <strong class="d-block">Nader Magdy</strong><span class="d-block">Status:running</span><small class="date d-block">9:47pm</small></div></a></div>
-                </div>
-              </div>
-            </div>
+             </div>
+              
           </div>
         </section>
 
@@ -311,6 +283,18 @@
  -->  
 
 <script type="text/javascript">
+
+ function updateCurrentTime() {
+	var today = new Date();
+	var date = today.getDate()+'.'+(today.getMonth()+1)+'.'+today.getFullYear();
+	var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+	var dateTime = date+' '+time;
+
+	var lastUpdateDiv = document.getElementById("lastUpdateDiv");
+	lastUpdateDiv.innerHTML = "Last update: " + dateTime;
+ }
+
+
 	var messagesDiv = document.getElementById("messages");
 	var incomingDataDiv = document.getElementById("incoming-data");
 	var incomingDataCnt = 0;
@@ -322,12 +306,16 @@ source.addEventListener('greeting', function(event) {
     incomingDataCnt += 1;
 
     message= data["message"];
-    
+
+
     if(message.startsWith("PREDICTED_WEATHER_FINAL:")) {
 	    predictDataDiv.innerHTML = "<p>" + message.substring(24) + "</p>";
+    	updateCurrentTime();
     } 
 
     else if(message.startsWith("DATA:")) {
+    	setSensorData(message);
+
 	    // messagesDiv.append(data["message"]);
 	    to_append = `<div class="item d-flex align-items-center">
 	                      <label for="input-1">` + data["message"] + `</label>
@@ -352,6 +340,44 @@ source.addEventListener('greeting', function(event) {
     }, false);
  
 
+		function setSensorData(data) {
+			str1 = "temperature_sensor_1': ";
+			temp1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+			str1 = "temperature_sensor_2': ";
+			temp2 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+
+			str1 = "light_sensor_1': ";
+			light1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+			str1 = "light_sensor_2': ";
+			light2 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+
+			str1 = "humidity_sensor_1': ";
+			humidity1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+			str1 = "humidity_sensor_2': ";
+			humidity2 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+
+			str1 = "atmo_pressure_sensor_1': ";
+			atmo1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+			str1 = "atmo_pressure_sensor_2': ";
+			atmo2 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+
+			str1 = "wind_sensor_1': ";
+			wind1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+			str1 = "wind_sensor_2': ";
+			wind2 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+
+			str1 = "unix_timestamp_us': ";
+			timestamp = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+
+			document.getElementById("temp").innerHTML = "<p>" + temp1 + "/" + temp2 + "</p>";
+			document.getElementById("humidity").innerHTML = "<p>" + humidity1 + "/" + humidity2 + "</p>";
+			document.getElementById("light").innerHTML = "<p>" + light1 + "/" + light2 + "</p>";
+			document.getElementById("wind").innerHTML = "<p>" + wind1 + "/" + wind2 + "</p>";
+			document.getElementById("atm-pressure").innerHTML = "<p>" + atmo1 + "/" + atmo2 + "</p>";
+			document.getElementById("timestamp").innerHTML = "<p>" + timestamp  + "</p>";
+		}
+
+// DATA:{'temperature_sensor_1': 37.50007411204504, 'temperature_sensor_2': 37.93698542411816, 'humidity_sensor_1': 3.391986182278761, 'humidity_sensor_2': 77.30193685569708, 'wind_speed_sensor_1': 39.207535688033616, 'wind_speed_sensor_2': 6.508800798411962, 'atmo_pressure_sensor_1': 654.988654809006, 'atmo_pressure_sensor_2': 736.0517462030361, 'light_sensor_1': 176.0, 'light_sensor_2': 125.0, 'unix_timestamp_us': 1584557664076949}
 </script>
 </body>
 
