@@ -5,6 +5,7 @@ from .aggregator import Aggregator
 from .mysseclient import with_urllib3
 import requests
 from .directory import Directory
+from .webactor import WebActor
 from gevent.queue import Queue
 from enum import Enum
 import gevent
@@ -25,6 +26,8 @@ class Requestor(Actor):
         self.aggregator_actor = Aggregator("Aggregator actor", self)
         self.aggregator_actor.start()
   
+        self.web_actor = WebActor()
+        self.web_actor.start()
         # self.url = 'http://0.0.0.0:4000/iot'
         
 
@@ -120,6 +123,7 @@ class Requestor(Actor):
     def show_final_result(self, message):
         # self.printer_actor.inbox.put({"text": "FINAL RESULT AGGREGATED:", "type":"green_header"})
         self.printer_actor.inbox.put({"text":message, "type":"green_header"})
+        self.web_actor.inbox.put(message)
 
     def receive(self, message):
         # if message == "work done":

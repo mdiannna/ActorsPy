@@ -59,7 +59,7 @@ class Pool(Actor):
 # printer_main.start()
 # printer_main.inbox.put({"text":"Program started", "type":"header"})
 
-prettyprint.print_header("Program started")
+# prettyprint.print_header("Program started")
 
 # gevent.joinall([gevent.spawn(go)])
 
