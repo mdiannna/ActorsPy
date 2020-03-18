@@ -40,6 +40,7 @@ app = create_app()
 
 @app.route('/')
 def index():
+  # TODO: request la http://0.0.0.0:5000/receive-sse-sensor-data?
   return render_template('test_receive_events.html')
 
 
