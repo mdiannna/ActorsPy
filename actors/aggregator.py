@@ -57,10 +57,11 @@ class Aggregator(Actor):
         # "SLIGHT_RAIN"
         # "HEAVY_RAIN"
         # "HOT"
+        # "WARM" = SUN
         # "CONVECTION_OVEN"
-        # "WARM"
         # "SLIGHT_BREEZE"
         # "CLOUDY"
+        
         # "MONSOON"
 
         
