@@ -154,3 +154,10 @@ TODO:
 
 - clean comments everywhere
 ?? - use docker-compose depends_on and remove sleep
+
+
+
+------
+ | redis.exceptions.ConnectionError: Error 111 connecting to 0.0.0.0:6379. Connection refused.
+
+$sudo service redis-server stop

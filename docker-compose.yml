@@ -1,14 +1,22 @@
 version: '3'
 services:
-  web:
-    build: .
-    ports:
-      - "5000:5000"
-    command: bash -c "sleep 10 && flask run"
-    depends_on:
-      - patr
   patr:
     image: "alexburlacu/rtp-server"
     container_name: patr
     ports:
       - "4000:4000"
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    command: bash -c "sleep 10 && flask run"
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - patr
+  redis:
+    image: "redis:alpine"
+    restart: always
+    ports:
+      - '6379:6379'
+  

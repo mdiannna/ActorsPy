@@ -1,5 +1,3 @@
-
-# FOR REQUESTS SSE
 def with_urllib3(url):
     """Get a streaming response for the given event feed using urllib3."""
     import urllib3

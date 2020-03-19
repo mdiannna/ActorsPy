@@ -17,7 +17,8 @@ class WebActor(Actor):
         self.name = "WebActor"
         self.state = States.Idle
         # TODO: env var
-        self.url = 'http://0.0.0.0:5000'  + '/send'
+        # self.url = 'http://0.0.0.0:5000'  + '/send'
+        self.url = os.getenv("SEND_URL")
         print(self.url)
 
     def start(self):

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from pusher import Pusher
 from flask_sse import sse
+from config import config
 
 import uuid
 import json
@@ -16,6 +17,7 @@ import requests
 import urllib3
 import os
 
+
 def create_app():
   # create flask app
   app = Flask(__name__)
@@ -23,25 +25,19 @@ def create_app():
   app.secret_key = 'secret'
   with app.app_context():
     # app.config["REDIS_URL"] = "redis://localhost"
-    app.config["REDIS_URL"] = "redis://0.0.0.0"
+    # app.config["REDIS_URL"] = "redis://0.0.0.0"
+    app.config["REDIS_URL"] = config["REDIS_URL"]
     app.register_blueprint(sse, url_prefix='/stream')
-    # app.register_blueprint(sse, url_prefix='/receive-sse-sensor-data')
-  # app.app_context() .push()
-
+    
   return app
 
 app = create_app()
 
 
-
-# @app.route('/test-receive-events')
-# def test_receive_events():
-#   return render_template('test_receive_events.html')
-
 @app.route('/')
 def index():
   # TODO: request la http://0.0.0.0:5000/receive-sse-sensor-data?
-  return render_template('test_receive_events.html')
+  return render_template('receive_events.html')
 
 
 @app.route('/send/<message>')
@@ -55,6 +51,7 @@ def send_message(message):
 @app.route('/help-iot')
 def helpIoT():
   # help_url = app.config['EVENTS_SERVER_URL'] + '/help'
+  # help_url = os.getenv('EVENTS_SERVER_URL')  + '/help'
   help_url = os.getenv('EVENTS_SERVER_URL')  + '/help'
   r = requests.get(help_url)
   return r.json()
@@ -66,13 +63,10 @@ def receiveSSE():
   gevent.joinall([gevent.spawn(pool.start)])
 
 
-# run Flask app in debug mode
-# app.run(debug=True, host='0.0.0.0:5000')
-
-
 # os.environ['EVENTS_SERVER_URL'] = 'http://patr:4000'
-os.environ['EVENTS_SERVER_URL'] = 'http://0.0.0.0:4000'
-
+# os.environ['EVENTS_SERVER_URL'] = 'http://0.0.0.0:4000'
+os.environ['EVENTS_SERVER_URL'] = config['EVENTS_SERVER_URL'] 
+os.environ["SEND_URL"] = config["SEND_URL"]
 
 
 if __name__ == "__main__":

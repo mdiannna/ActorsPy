@@ -34,11 +34,7 @@ def bold(text):
 def underline(text):
 	return bcolors.UNDERLINE + str(text) + bcolors.ENDC
 
-# def header(text):
-# 	return bcolors.HEADER + str(text) + bcolors.ENDC
-
 def print_header(text):
-	# print(header(str(text)))
 	print(bcolors.HEADER + "-------------------" + bcolors.ENDC)
 	print(bcolors.HEADER + str(text) + bcolors.ENDC)
 	print(bcolors.HEADER + "-------------------" + bcolors.ENDC)
