@@ -1,20 +1,23 @@
-TODO: 
-- Install redis package
+# Actors Based System for Wather Prediction
+This project was done for the Real Time Applications Programming Lab at the University of Moldova, Software Engineering program.
 
-(Ubuntu:)
+## Screenshots and demo
+![Screenshot 1](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s1.png?raw=true)
+![Screenshot 2](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s2.png?raw=true)
+![Screenshot 3](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s3.png?raw=true)
+![Screenshot 4](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s4.png?raw=true)
+**Video demo here:** https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/demo1.mp4
 
-$ apt-get install redis-server 
+## Setup project: 
+1. Install redis package
+   (Ubuntu:)
+   $ apt-get install redis-server 
 
-- use docker compose
-
+2. Use docker compose:
 $ docker-compose up
 
-Tutorial: 
+3. Open http://0.0.0.0:5000/receive-sse-sensor-data
+4. Open http://0.0.0.0:5000/
 
-1. http://0.0.0.0:5000/receive-sse-sensor-data
-2. http://0.0.0.0:5000/
-
-sau de mutat in index mai intii request la receive data, pe urma de citit eventuri?
-
-- TODO: de schimbat poza
-
+## Author
+Marusic Diana, FAF-171
