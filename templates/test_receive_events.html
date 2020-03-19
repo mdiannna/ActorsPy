@@ -210,7 +210,7 @@
                 	
                 </div>
                 <br>
-                <img src="{{ url_for('static', filename='img/weather/sun.gif')}}" class="img img-fluid">
+                <img src="{{ url_for('static', filename='img/weather/sun.gif')}}" class="img img-fluid" id="prediction-img">
                 
 
                 <!-- <div class="bar-chart block no-margin-bottom">
@@ -309,8 +309,10 @@ source.addEventListener('greeting', function(event) {
 
 
     if(message.startsWith("PREDICTED_WEATHER_FINAL:")) {
-	    predictDataDiv.innerHTML = "<p>" + message.substring(24) + "</p>";
-    	updateCurrentTime();
+    	prediction = message.substring(24);
+	    predictDataDiv.innerHTML = "<p>" + prediction + "</p>";
+    	updateImageByPrediction(prediction);
+    	updateCurrentTime(message);
     } 
 
     else if(message.startsWith("DATA:")) {
@@ -380,25 +382,27 @@ source.addEventListener('greeting', function(event) {
 
 		// TODO: add correct images depending on prediction
 		var images = {
-			"BLIZZARD": "img/weather/blizzard.jpg",
-			"CLOUDY": "img/weather/cloudy.gif",
-			"CONVECTION_OVEN": "img/weather/convection_oven.gif",
-			"HOT": "img/weather/hot_weather.gif",
-			"MONSOON": "img/weather/monsoon.gif",
-			"SLIGHT_BREEZE": "img/weather/slight_breeze.gif",
-			"HEAVY_RAIN": "img/weather/heavy_rain.gif",
-			"SLIGHT_RAIN": "img/weather/slight_rain.gif",
-			"SNOW": "img/weather/snow.gif",
-			"WET_SNOW": "img/weather/wet_snow.png",
-			"WARM":  "img/weather/sun.gif",
-
+			"BLIZZARD": "{{ url_for('static', filename='img/weather/blizzard.jpg')}}",
+			"CLOUDY": "{{ url_for('static', filename='img/weather/cloudy.gif')}}",
+			"CONVECTION_OVEN": "{{ url_for('static', filename='img/weather/convection_oven.gif')}}",
+			"HOT": "{{ url_for('static', filename='img/weather/hot_weather.gif')}}",
+			"MONSOON": "{{ url_for('static', filename='img/weather/monsoon.gif')}}",
+			"SLIGHT_BREEZE": "{{ url_for('static', filename='img/weather/slight_breeze.gif')}}",
+			"HEAVY_RAIN": "{{ url_for('static', filename='img/weather/heavy_rain.gif')}}",
+			"SLIGHT_RAIN": "{{ url_for('static', filename='img/weather/slight_rain.gif')}}",
+			"SNOW": "{{ url_for('static', filename='img/weather/snow.gif')}}",
+			"WET_SNOW": "{{ url_for('static', filename='img/weather/wet_snow.png')}}",
+			"WARM":  "{{ url_for('static', filename='img/weather/sun.gif')}}",
+			"JUST_A_NORMAL_DAY":  "{{ url_for('static', filename='img/weather/just_a_normal_day.gif')}}"
 		};
 
 
-		var updateImageByPrediction(msg_prediction) {
+		// function updateImageByPrediction(msg_prediction) {
+		function updateImageByPrediction(prediction) {
 			str1 = "PREDICTED_WEATHER_FINAL:";
-			prediction = data.substring(data.search(str1) + str1.length;
-			// TODO : set correct image dependinf on prediction 
+			console.log("PREDICTION:" + prediction);
+			document.getElementById("prediction-img").src = images[prediction];
+			document.getElementById("prediction-img").alt = "prediction: " + prediction;
 		}
 
 // Example data:
