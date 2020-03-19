@@ -6,7 +6,7 @@ This project was done for the Real Time Applications Programming Lab at the Univ
 ![Screenshot 2](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s2.png?raw=true)
 ![Screenshot 3](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s3.png?raw=true)
 ![Screenshot 4](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s4.png?raw=true)
-**Video demo here:** https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/demo1.mp4
+**Video demo here:** https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/demo4.mp4
 
 ## Setup project: 
 1. Install redis package
@@ -16,8 +16,10 @@ This project was done for the Real Time Applications Programming Lab at the Univ
 2. Use docker compose:
 $ docker-compose up
 
-3. Open http://0.0.0.0:5000/receive-sse-sensor-data
-4. Open http://0.0.0.0:5000/
+3. If you would like to see only the actors system + printing in console, go to
+http://0.0.0.0:5000/receive-sse-sensor-data
+4. If you want to see the web interface frontend, run 3. then open in another tab http://0.0.0.0:5000/
+
 
 ## Author
 Marusic Diana, FAF-171
