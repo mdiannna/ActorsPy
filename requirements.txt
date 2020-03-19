@@ -11,4 +11,5 @@ sseclient-py==1.7
 urllib3==1.25.8
 virtualenv==15.1.0
 Werkzeug==1.0.0
+redis==3.4.1
 flask-sse
