@@ -1,12 +1,11 @@
-from .actors import Actor, States, Work
-# from worker import Worker
-from .workersupervisor import WorkerSupervisor
-# from requestor import Requestor
-
-
 ###############################
 # Supervisor Restart Policy
 ###############################
+
+from .actors import Actor, States, Work
+from .workersupervisor import WorkerSupervisor
+
+
 class SupervisorRestartPolicy():
     def restart(self, supervisor):
         workers_children = []

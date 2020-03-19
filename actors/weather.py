@@ -1,28 +1,3 @@
-# 'atmo_pressure_sensor_1': 729.5990508104659,
-# 'atmo_pressure_sensor_2': 628.5908617577834,
-# 'humidity_sensor_1': 98.17478989206458,
-# 'humidity_sensor_2': 18.64852258459042,
-# 'light_sensor_1': 84.0,
-# 'light_sensor_2': 177.0,
-# 'temperature_sensor_1': 12.204162287830876,
-# 'temperature_sensor_2': 12.294824751614762,
-# 'unix_timestamp_us': 1584002802157924,
-# 'wind_speed_sensor_1': 35.17914031094192,
-# 'wind_speed_sensor_2': 42.27585612358403
-
-data = {
-	'atmo_pressure_sensor_1': 729.5990508104659,
-	'atmo_pressure_sensor_2': 628.5908617577834,
-	'humidity_sensor_1': 98.17478989206458,
-	'humidity_sensor_2': 18.64852258459042,
-	'light_sensor_1': 84.0,
-	'light_sensor_2': 177.0,
-	'temperature_sensor_1': 12.204162287830876,
-	'temperature_sensor_2': 12.294824751614762,
-	'unix_timestamp_us': 1584002802157924,
-	'wind_speed_sensor_1': 35.17914031094192,
-	'wind_speed_sensor_2': 42.27585612358403
-}
 
 def aggregate_sensor_values(data):
 	athm_pressure = (data["atmo_pressure_sensor_1"] + data["atmo_pressure_sensor_2"]) / 2.0
@@ -72,7 +47,19 @@ def print_aggregated_values(athm_pressure, humidity, light, temperature, wind_sp
 ###########
 # EXAMPLE USAGE:
 ###########
-
+# data = {
+# 	'atmo_pressure_sensor_1': 729.5990508104659,
+# 	'atmo_pressure_sensor_2': 628.5908617577834,
+# 	'humidity_sensor_1': 98.17478989206458,
+# 	'humidity_sensor_2': 18.64852258459042,
+# 	'light_sensor_1': 84.0,
+# 	'light_sensor_2': 177.0,
+# 	'temperature_sensor_1': 12.204162287830876,
+# 	'temperature_sensor_2': 12.294824751614762,
+# 	'unix_timestamp_us': 1584002802157924,
+# 	'wind_speed_sensor_1': 35.17914031094192,
+# 	'wind_speed_sensor_2': 42.27585612358403
+# }
 # athm_pressure, humidity, light, temperature, wind_speed = aggregate_sensor_values(data)
 # print_aggregated_values(athm_pressure, humidity, light, temperature, wind_speed)
 # print("---")

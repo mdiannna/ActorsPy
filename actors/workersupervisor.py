@@ -7,7 +7,6 @@ from .printeractor import PrinterActor
 class WorkerSupervisor(Actor):
 
     def __init__(self, name, directory, workers_array=[]):
-        # Actor.__init__(self)
         super().__init__()
         self.name = name
         self.state = States.Idle
@@ -22,7 +21,6 @@ class WorkerSupervisor(Actor):
 
         if len(workers_array)>0:
             for worker_name in workers_array:
-                # print("WORKER_NAME", worker_name)
                 self.add_named_worker(worker_name)    
         else:
             self.add_worker()    
@@ -37,7 +35,6 @@ class WorkerSupervisor(Actor):
     def add_worker(self):
         self.workers_cnt_id += 1
         new_worker = Worker("worker%d" % self.workers_cnt_id, self.directory)
-        # prettyprint.print_warning("ADD WORKER %d" % self.workers_cnt_id)
         self.printer_actor.inbox.put({"text":"ADD WORKER %d" % self.workers_cnt_id, "type":'warning'})
 
         new_worker.start()
@@ -50,12 +47,6 @@ class WorkerSupervisor(Actor):
         self.printer_actor.inbox.put({"text":"ADD NAMED WORKER %s" % name, "type":'warning'})
 
         new_worker.start()
-        self.workers.put(new_worker)
-
-    # Don't know if needed
-    def add_inactive_worker(self, name):
-        new_worker = Worker(name, self.directory)
-        # new_worker.start()
         self.workers.put(new_worker)
 
     def remove_worker(self):
@@ -76,7 +67,6 @@ class WorkerSupervisor(Actor):
         worker_to_be_restarted = self.worker_restart_policy.restart_worker(current_worker)
 
         name = current_worker.get_name()
-        # worker_to_be_restarted.inbox.put(message)
         self.printer_actor.inbox.put({"text":"--killed worker %s" % name, "type":'warning'})
         self.workers.put(worker_to_be_restarted)
         self.printer_actor.inbox.put({"text":"--restarted worker %s" %worker_to_be_restarted.get_name(), "type":'warning'})
@@ -112,10 +102,7 @@ class WorkerSupervisor(Actor):
                     self.remove_worker()
                 if(not self.workers.empty()):
                     self.remove_worker()
-            # else:
-                # if(self.workers.qsize()>( self.demandWorkQueue.qsize()+ 2)):
-                    # self.remove_worker()
-    
+     
 
     def get_printer_actor(self):
         return self.printer_actor            
@@ -136,7 +123,6 @@ class WorkerSupervisor(Actor):
             else:
                 self.printer_actor.inbox.put({"text":"Max work Capacity exceeded!!! waiting for free worker", "type":"error"})
                 return
-            # raise Exception("Supervisor received work but no workers to give it to!")
         
         if self.workers.empty():
             self.printer_actor.inbox.put({"text":"No active worker. Adding new worker", "type":"warning"})

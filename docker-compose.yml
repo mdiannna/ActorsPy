@@ -15,8 +15,13 @@ services:
     depends_on:
       - patr
   redis:
+    container_name: cache
     image: "redis:alpine"
     restart: always
     ports:
       - '6379:6379'
+    expose:
+      - 6379
+    environment:
+      - REDIS_URL=redis://cache
   

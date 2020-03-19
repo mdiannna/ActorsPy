@@ -1,7 +1,5 @@
 from .actors import Actor, States, Work
 from .worker import Worker
-# from workersupervisor import WorkerSupervisor
-# from requestor import Requestor
 
 class WorkerRestartPolicy():
     def restart_worker(self, current_worker):

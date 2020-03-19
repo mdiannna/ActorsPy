@@ -1,3 +1,4 @@
+# Code for testing aggregator to be tested in the app.py file
 from actors.aggregator import Aggregator
 import random
 
