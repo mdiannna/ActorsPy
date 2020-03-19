@@ -9,9 +9,11 @@ This project was done for the Real Time Applications Programming Lab at the Univ
 **Video demo here:** https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/demo3.mp4
 
 ## Setup project: 
-1. Install redis package
+1. If running on Ubuntu without docker, install redis package
    (Ubuntu:)
    $ apt-get install redis-server 
+   
+   If not, skip
 
 2. Use docker compose:
 $ docker-compose up
