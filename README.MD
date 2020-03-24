@@ -27,5 +27,16 @@ http://0.0.0.0:5000/receive-sse-sensor-data
 - then open in another tab http://0.0.0.0:5000/
 
 
+## Troubleshooting
+If you have problems, try:
+$docker-compose down
+$docker rm -f $(docker ps -aq)
+$docker rmi -f $(docker images -a -q)
+$sudo service redis-server stop
+$docker-compose up
+
+
+Also check your config.py if it is configured to work woth docker or local
+
 ## Author
 Marusic Diana, FAF-171

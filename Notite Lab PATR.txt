@@ -182,3 +182,17 @@ docker network rm $(docker network ls | tail -n+2 | awk '{if($2 !~ /bridge|none|
 
 
  sudo service docker restart
+
+
+ -----
+
+### Troubleshooting
+If you have problems, try:
+$docker-compose down
+$docker rm -f $(docker ps -aq)
+$docker rmi -f $(docker images -a -q)
+$sudo service redis-server stop
+$docker-compose up
+
+
+Also check your config.py if it is configured to work woth docker or local
