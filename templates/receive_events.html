@@ -3,7 +3,7 @@
   <head> 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dark Bootstrap Admin by Bootstrapious.com</title>
+    <title>Weather predict actors</title>
     <meta name="description" content="">
     <!-- Refresh every 10 seconds -->
     <!-- <meta http-equiv="refresh" content="10">                 -->
@@ -31,6 +31,10 @@
 		.statistic-block .number {
 			font-size: 18px !important;
 		}
+
+    .incoming-data-div {
+      max-height: 80vh;
+    }
     </style>
   </head>
   <body>
@@ -92,10 +96,10 @@
                     <div class="title">
                       <div class="icon"><i class="fa fa-sun-o"></i></div><strong>Light</strong>
                     </div>
-                    <div class="number dashtext-1" id="light">0/0</div>
+                    <div class="number dashtext-1" id="light">-</div>
                   </div>
                   <div class="progress progress-template">
-                    <div role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-1"></div>
+                    <div role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-1"></div>
                   </div>
                 </div>
               </div>
@@ -105,10 +109,10 @@
                     <div class="title">
                       <div class="icon"><i class="fa fa-umbrella"></i></div><strong>Humidity</strong>
                     </div>
-                    <div class="number dashtext-2" id="humidity">0/0</div>
+                    <div class="number dashtext-2" id="humidity">-</div>
                   </div>
                   <div class="progress progress-template">
-                    <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-2"></div>
+                    <div role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-2"></div>
                   </div>
                 </div>
               </div>
@@ -118,10 +122,10 @@
                     <div class="title">
                       <div class="icon"><i class="fa fa-thermometer"></i></div><strong>Temperature</strong>
                     </div>
-                    <div class="number dashtext-3" id="temp">0/0</div>
+                    <div class="number dashtext-3" id="temp">-</div>
                   </div>
                   <div class="progress progress-template">
-                    <div role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-3"></div>
+                    <div role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-3"></div>
                   </div>
                 </div>
               </div>
@@ -131,10 +135,10 @@
                     <div class="title">
                       <div class="icon"><i class="fa fa-reorder"></i></div><strong>Wind speed</strong>
                     </div>
-                    <div class="number dashtext-4" id="wind">0/0</div>
+                    <div class="number dashtext-4" id="wind">-</div>
                   </div>
                   <div class="progress progress-template">
-                    <div role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-4"></div>
+                    <div role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-4"></div>
                   </div>
                 </div>
               </div>
@@ -148,10 +152,10 @@
                     <div class="title">
                       <div class="icon"><i class="fa fa-reorder"></i></div><strong>Atm. pressure</strong>
                     </div>
-                    <div class="number dashtext-4" id="atm-pressure">0/0</div>
+                    <div class="number dashtext-4" id="atm-pressure">-</div>
                   </div>
                   <div class="progress progress-template">
-                    <div role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-4"></div>
+                    <div role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-4"></div>
                   </div>
                 </div>
               </div>
@@ -160,12 +164,12 @@
                 <div class="statistic-block block">
                   <div class="progress-details d-flex align-items-end justify-content-between">
                     <div class="title">
-                      <div class="icon"><i class="fa fa-thermometer"></i></div><strong>Timestamp</strong>
+                      <div class="icon"><i class="fa fa-clock-o"></i></div><strong>Timestamp</strong>
                     </div>
-                    <div class="number dashtext-3" id="timestamp">0</div>
+                    <div class="number dashtext-3" id="timestamp">-</div>
                   </div>
                   <div class="progress progress-template">
-                    <div role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-3"></div>
+                    <div role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-3"></div>
                   </div>
                 </div>
               </div>
@@ -221,21 +225,7 @@
                 </div> -->
                 </div>
 
-                  <!-- <div class="block">
-                  <form >
-                    <label>Select update time</label>
-                    <select name="account" class="form-control mb-3 mb-3">
-                            <option>5 sec</option>
-                            <option>10 sec</option>
-                            <option>1 min</option>
-                            <option>3 min</option>
-                            <option>5 min</option>
-                            <option>10 min</option>
-                            <option>1 h</option>
-                          </select>
-                          <button type="submit">ok</button>
-                  </form>
-              </div> -->
+               
               
 
               </div>
@@ -243,7 +233,7 @@
               <div class="col-lg-8">
                 <div class="checklist-block block">
                   <div class="title"><strong>Incoming data</strong></div>
-                  <div id="incoming-data">
+                  <div id="incoming-data"  class="overflow-auto incoming-data-div" >
                     
                   </div>
                 </div>
@@ -326,7 +316,7 @@ source.addEventListener('greeting', function(event) {
 	    // $("#incoming-data").append(to_append);
 	    incomingDataDiv.innerHTML += to_append;
 
-	    if(incomingDataCnt > 5) {
+	    if(incomingDataCnt > 20) {
 	    	incomingDataDiv.innerHTML = "";
 	    	incomingDataCnt = 0;
 	    }
@@ -342,7 +332,7 @@ source.addEventListener('greeting', function(event) {
     }, false);
  
 
-		function setSensorData(data) {
+		function setSensorDataAllValues(data) {
 			str1 = "temperature_sensor_1': ";
 			temp1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
 			str1 = "temperature_sensor_2': ";
@@ -378,6 +368,33 @@ source.addEventListener('greeting', function(event) {
 			document.getElementById("atm-pressure").innerHTML = "<p>" + atmo1 + "/" + atmo2 + "</p>";
 			document.getElementById("timestamp").innerHTML = "<p>" + timestamp  + "</p>";
 		}
+
+    function setSensorData(data) {
+      str1 = "temperature': ";
+      temp1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+      
+      str1 = "light': ";
+      light1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+      
+      str1 = "humidity': ";
+      humidity1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+      
+      str1 = "atmo_pressure': ";
+      atmo1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+      
+      str1 = "wind': ";
+      wind1 = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+      
+      str1 = "timestamp': ";
+      timestamp = data.substring(data.search(str1) + str1.length, data.search(str1) + str1.length + 5.0);
+
+      document.getElementById("temp").innerHTML = "<p>" + temp1 +"</p>";
+      document.getElementById("humidity").innerHTML = "<p>" + humidity1  + "</p>";
+      document.getElementById("light").innerHTML = "<p>" + light1 +  "</p>";
+      document.getElementById("wind").innerHTML = "<p>" + wind1 +  "</p>";
+      document.getElementById("atm-pressure").innerHTML = "<p>" +atmo1 + "</p>";
+      document.getElementById("timestamp").innerHTML = "<p>" + timestamp  + "</p>";
+    }
 
 
 		// TODO: add correct images depending on prediction

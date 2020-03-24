@@ -5,8 +5,9 @@ def aggregate_sensor_values(data):
 	light = (data["light_sensor_1"] + data["light_sensor_2"]) / 2.0
 	temperature = (data["temperature_sensor_1"] + data["temperature_sensor_2"]) / 2.0
 	wind_speed = (data["wind_speed_sensor_1"] + data["wind_speed_sensor_2"]) / 2.0
+	timestamp = data["unix_timestamp_us"]
 
-	return athm_pressure, humidity, light, temperature, wind_speed
+	return athm_pressure, humidity, light, temperature, wind_speed, timestamp
 
 def predict_weather(athm_pressure, humidity, light, temperature, wind_speed):
 	if (temperature < -2 and light < 128) and athm_pressure < 720:
@@ -43,6 +44,7 @@ def print_aggregated_values(athm_pressure, humidity, light, temperature, wind_sp
 	print("LIGHT: ", light)
 	print("TEMPERATURE:", temperature)
 	print("WIND_SPEED: ", wind_speed)
+	print("TIMESTAMP: ", timestamp)
 
 ###########
 # EXAMPLE USAGE:

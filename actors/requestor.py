@@ -67,8 +67,18 @@ class Requestor(Actor):
                 self.printer_actor.inbox.put({"text":json.loads(event.data), "type":"pprint"})
                 sensors_data = json.loads(event.data)["message"]
 
+
+           
+
                 self.last_sensors_data = sensors_data
                 self.supervisor.inbox.put(sensors_data)
+
+                # printer_actor = self.directory.get_actor('printeractor')
+                # printer_actor.inbox.put({"text":"PREDICTED_WEATHER_FINAL:" + predicted_weather, "type":"green_header"})
+
+                # web_actor = self.directory.get_actor('webactor')
+                # web_actor.inbox.put("DATA:" + sensors_data)
+
 
             self.printer_actor.inbox.put({"text":"----", "type":"blue"})
 

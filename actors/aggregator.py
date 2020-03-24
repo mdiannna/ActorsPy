@@ -19,7 +19,7 @@ class Aggregator(Actor):
         self.current_time = time.time()
 
         self.reinit()
-        self.DELAY_TIME = 5
+        self.DELAY_TIME = 3
         print("Aggregator init")
 
 
