@@ -6,7 +6,7 @@ This project was done for the Real Time Applications Programming Lab at the Univ
 ![Screenshot 2](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s2_old.png?raw=true)
 ![Screenshot 3](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s3.png?raw=true)
 ![Screenshot 4](https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/s4.png?raw=true)
-**Video demo here:** https://github.com/mdiannna/ActorsPy/blob/master/screenshots_video/demo4.mp4
+**Video demo here:** https://github.com/mdiannna/ActorsPy/blob/24_03_20/screenshots_video/demo4.mp4
 
 ## Setup project: 
 1. If running on Ubuntu without docker, install redis package
