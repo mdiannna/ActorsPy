@@ -1,5 +1,4 @@
 from .actors import Actor, States, Work
-# from .printeractor import PrinterActor
 from . import weather
 import gevent 
 import json
@@ -9,8 +8,6 @@ class Worker(Actor):
         super().__init__()
         self.name = name
         self.state = States.Idle
-        # self.printer_actor = PrinterActor("Worker_printer")
-        # self.printer_actor.start()
         self.directory = directory
 
     def receive(self, message):
@@ -18,7 +15,7 @@ class Worker(Actor):
 
         try:
             if(message=="PANIC"):
-                raise Exception('PAINIC')
+                raise Exception('PANIC')
             else:
                 self.get_printer_actor().inbox.put({"text":"I %s was told to process '%s' [%d]" %(self.name, message, self.inbox.qsize()), "type":"blue"})
 
@@ -37,11 +34,9 @@ class Worker(Actor):
 
                 self.get_web_actor().inbox.put("DATA:" +str(json.dumps(str(sensor_data_web))))
 
-                # gevent.sleep(3)
-                # For debug
-                # print("PUT AGGREGATOR")
-                # print("PREDICTED_WEATHER:" + predicted_weather)
                 self.get_aggregator_actor().inbox.put("PREDICTED_WEATHER:" + predicted_weather)
+                self.get_printer_actor().inbox.put({"text":"PREDICTED_WEATHER:" + predicted_weather, "type":"header"})
+
                 self.state = States.Idle
         except:
             self.get_supervisor_actor().inbox.put("EXCEPTION WORKER" + self.get_name())

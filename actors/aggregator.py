@@ -32,13 +32,10 @@ class Aggregator(Actor):
 
 
     def receive(self, message):
-        # self.directory.get_actor('printeractor').inbox.put({"text":"received:" + message, "type":"green_header"})
-
         self.state = States.Running
         self.current_time = time.time()
         
         if(self.current_time - self.last_time >= self.DELAY_TIME ):
-            # print("PREDICTION")
                 
             if(len(self.predictions)>0):
                 predicted_weather = self.aggregate_all_predictions(copy.copy(self.predictions))
@@ -48,7 +45,6 @@ class Aggregator(Actor):
 
             self.reinit()
             self.last_time = self.current_time
- 
         
         prediction = message  # example: "PREDICTED_WEATHER:SNOW"
 

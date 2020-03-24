@@ -2,7 +2,7 @@ from .actors import Actor, States, Work
 from .worker import Worker
 from gevent.queue import Queue
 from .workerrestartpolicy import WorkerRestartPolicy
-# from .printeractor import PrinterActor
+
 
 class WorkerSupervisor(Actor):
 
@@ -14,10 +14,7 @@ class WorkerSupervisor(Actor):
         self.workers = Queue(maxsize=self.max_work_capacity)
         self.workers_cnt_id = 0
         self.worker_restart_policy = WorkerRestartPolicy()
-        # TODELETE
-        # self.printer_actor = PrinterActor("Supervisor_printer")
-        # self.printer_actor.start()
-  
+    
         self.directory = directory
 
         if len(workers_array)>0:
@@ -28,16 +25,12 @@ class WorkerSupervisor(Actor):
 
 
     def get_printer_actor(self):
-        # print("!!!!!!!")
-        # print(self.directory.get_actor('printeractor'))
-        # print(self.directory)
         return self.directory.get_actor('printeractor')
 
     def add_worker(self):
         self.workers_cnt_id += 1
         new_worker = Worker("worker%d" % self.workers_cnt_id, self.directory)
         self.get_printer_actor().inbox.put({"text":"ADD WORKER %d" % self.workers_cnt_id, "type":'warning'})
-        # print(ADD WORKER)
         new_worker.start()
         self.workers.put(new_worker)
 
@@ -163,12 +156,17 @@ class WorkerSupervisor(Actor):
             current_worker = self.workers.get()
             self.process_panic_message(current_worker)
             self.workers.put(current_worker)
+
+        # when worker sends notification of exception, after panic message for example
         elif "EXCEPTION WORKER" in message:
             start = message.find('EXCEPTION WORKER ') + len("EXCEPTION WORKER ")
             worker_name = message[start:]
-            print("WORKER_NAME" + worker_name)
+            # for debug
+            # print("WORKER_NAME" + worker_name)
             current_worker = self.get_worker_name(worker_name)
             self.process_worker_fail(current_worker)
+            
+        # send work to calculate to worker
         else:
             current_worker = self.workers.get()
             self.get_printer_actor().inbox.put({"text":"Sending work to worker %s [%d]" % (current_worker.name, self.inbox.qsize()), "type":"warning"})

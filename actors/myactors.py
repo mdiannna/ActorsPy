@@ -13,7 +13,6 @@ from .directory import Directory
 from .webactor import WebActor
 from .aggregator import Aggregator
 
-# from restartpolicies import SupervisorRestartPolicy, WorkerRestartPolicy, RequestorRestartPolicy
 from . import prettyprint
 from .workersupervisor import WorkerSupervisor
 
@@ -34,8 +33,6 @@ class Pool(Actor):
         directory.add_actor("supervisor", self.supervisor)
         directory.add_actor("client", self.requestor)
         directory.add_actor("aggregator", self.aggregator)
-        
-
 
     def start(self):
         self.printer_actor.start()
@@ -48,6 +45,5 @@ class Pool(Actor):
         self.supervisor.inbox.put('start')
         gevent.joinall([self.requestor, self.supervisor])
 
-
     def get_actors(self):
-        return [self.requestor, self.supervisor]
+        return [self.requestor, self.supervisor, self.web_actor, self.printer_actor, self.aggregator]
