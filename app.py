@@ -60,6 +60,7 @@ def receiveSSE():
 
 os.environ['EVENTS_SERVER_URL'] = config['EVENTS_SERVER_URL'] 
 os.environ["SEND_URL"] = config["SEND_URL"]
+os.environ["SEND_WEB"] = config["SEND_WEB"]
 
 
 if __name__ == "__main__":

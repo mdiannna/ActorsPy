@@ -13,9 +13,7 @@ class WebActor(Actor):
         self.name = name
         self.state = States.Idle
         self.url = os.getenv("SEND_URL")
-        # Only for debug
-        # print(self.url)
-        # print("WebActor init")
+        print("WebActor init")
 
     def start(self):
         Actor.start(self)
@@ -23,6 +21,9 @@ class WebActor(Actor):
     def receive(self, message):
         # only for debug
         print("************RECEIVE WEB ACTOR")
-        # print("message:", message)
+        
         # Send message to sse route
-        r = requests.get(self.url + '/' + message)
+        if os.getenv("SEND_WEB")=='NO_SEND':
+            print("NO_SEND")
+        else:
+            r = requests.get(self.url + '/' + message)
