@@ -22,7 +22,8 @@ class Requestor(Actor):
         self.directory = directory
         self.name = name
         self.state = States.Idle        
-        self.aggregator_actor = Aggregator("Aggregator actor", self)
+        # self.aggregator_actor = Aggregator("Aggregator actor", self, directory)
+        self.aggregator_actor = Aggregator("Aggregator actor", directory)
         self.aggregator_actor.start()
   
         self.web_actor = WebActor()
@@ -78,17 +79,17 @@ class Requestor(Actor):
         self.aggregator_actor.inbox.put(message)
 
 
-    def show_final_result(self, message):
-        self.printer_actor.inbox.put({"text":message, "type":"green_header"})
-        self.web_actor.inbox.put(message)
-        self.web_actor.inbox.put("DATA:" + str(self.last_sensors_data))
+    # def show_final_result(self, message):
+    #     self.printer_actor.inbox.put({"text":message, "type":"green_header"})
+    #     self.web_actor.inbox.put(message)
+    #     self.web_actor.inbox.put("DATA:" + str(self.last_sensors_data))
 
 
     def receive(self, message):
         # if message == "work done":
-        if "PREDICTED_WEATHER_FINAL:" in message:
-            gevent.spawn(self.show_final_result(message))
-        elif "PREDICTED_WEATHER:" in message:
+        # if "PREDICTED_WEATHER_FINAL:" in message:
+        #     gevent.spawn(self.show_final_result(message))
+        if "PREDICTED_WEATHER:" in message:
             gevent.spawn(self.ack(message))
         elif message == "start":
             self.printer_actor.inbox.put({"text":"Requestor starting...", "type":"header"})

@@ -54,7 +54,7 @@ def helpIoT():
 # Receive weather data from sensor from rtp-server
 @app.route('/receive-sse-sensor-data')
 def receiveSSE():
-  pool = myactors.Pool(10) # try 2, 3, 5, 8...
+  pool = myactors.Pool()
   gevent.joinall([gevent.spawn(pool.start)])
 
 

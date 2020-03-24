@@ -7,11 +7,12 @@ from .helpers import most_frequent
 
 
 class Aggregator(Actor):
-    def __init__(self, name, requestor):
+    def __init__(self, name, directory):
         Actor.__init__(self)
         self.name = name
         self.state = States.Idle
-        self.requestor = requestor
+        self.directory = directory
+        # self.requestor = requestor
         self.printer_actor = PrinterActor("Aggregator_printer")
         self.printer_actor.start()
         self.last_time = time.time()
@@ -31,6 +32,8 @@ class Aggregator(Actor):
 
 
     def receive(self, message):
+        self.directory.get_actor('printeractor').inbox.put({"text":"received:" + message, "type":"green_header"})
+
         self.state = States.Running
         self.current_time = time.time()
      
@@ -38,8 +41,14 @@ class Aggregator(Actor):
             
             if(len(self.predictions)>0):
                 predicted_weather = self.aggregate_all_predictions(copy.copy(self.predictions))
-                requestor = self.get_requestor()
-                requestor.inbox.put("PREDICTED_WEATHER_FINAL:" + predicted_weather)
+
+                printer_actor = self.directory.get_actor('printeractor')
+                printer_actor.inbox.put({"text":"PREDICTED_WEATHER_FINAL:" + predicted_weather, "type":"green_header"})
+
+                web_actor = self.directory.get_actor('webactor')
+                web_actor.inbox.put("PREDICTED_WEATHER_FINAL:" + predicted_weather)
+                # TODO:
+                # self.web_actor.inbox.put("DATA:" + str(self.last_sensors_data))
                 
             self.reinit()
             self.last_time = self.current_time
@@ -67,8 +76,8 @@ class Aggregator(Actor):
         self.printer_actor.inbox.put({"text":text, "type":"green_header"})
 
 
-    def get_requestor(self):
-        return self.requestor
+    # def get_requestor(self):
+    #     return self.requestor
 
 
     def set_delay_time(self, new_delay_time):
