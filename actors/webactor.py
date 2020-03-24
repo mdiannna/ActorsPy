@@ -13,8 +13,9 @@ class WebActor(Actor):
         self.name = name
         self.state = States.Idle
         self.url = os.getenv("SEND_URL")
-        print(self.url)
-        print("WebActor init")
+        # Only for debug
+        # print(self.url)
+        # print("WebActor init")
 
     def start(self):
         Actor.start(self)

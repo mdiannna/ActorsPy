@@ -1,5 +1,5 @@
 from .actors import Actor, States, Work
-from .printeractor import PrinterActor
+# from .printeractor import PrinterActor
 from . import weather
 import gevent 
 import json
@@ -9,13 +9,13 @@ class Worker(Actor):
         super().__init__()
         self.name = name
         self.state = States.Idle
-        self.printer_actor = PrinterActor("Worker_printer")
-        self.printer_actor.start()
+        # self.printer_actor = PrinterActor("Worker_printer")
+        # self.printer_actor.start()
         self.directory = directory
 
     def receive(self, message):
         self.state = States.Running
-        self.printer_actor.inbox.put({"text":"I %s was told to process '%s' [%d]" %(self.name, message, self.inbox.qsize()), "type":"blue"})
+        self.get_printer_actor().inbox.put({"text":"I %s was told to process '%s' [%d]" %(self.name, message, self.inbox.qsize()), "type":"blue"})
 
 
         athm_pressure, humidity, light, temperature, wind_speed, timestamp = weather.aggregate_sensor_values(message)
@@ -31,18 +31,24 @@ class Worker(Actor):
             "timestamp": timestamp
         }
 
-        web_actor = self.directory.get_actor('webactor')
-        print(web_actor.get_name())
-        web_actor.inbox.put("DATA:" +str(json.dumps(str(sensor_data_web))))
+        self.get_web_actor().inbox.put("DATA:" +str(json.dumps(str(sensor_data_web))))
 
         # gevent.sleep(3)
-        client = self.directory.get_actor("client")
-        client.inbox.put("PREDICTED_WEATHER:" + predicted_weather)
+        # For debug
+        # print("PUT AGGREGATOR")
+        # print("PREDICTED_WEATHER:" + predicted_weather)
+        self.get_aggregator_actor().inbox.put("PREDICTED_WEATHER:" + predicted_weather)
         self.state = States.Idle
 
     def get_printer_actor(self):
-        return self.printer_actor
+        return self.directory.get_actor('printeractor')
 
+    def get_web_actor(self):
+        return self.directory.get_actor('webactor')
+    
+    def get_aggregator_actor(self):
+        return self.directory.get_actor('aggregator')
+        
     def get_directory(self):
         return self.directory
 

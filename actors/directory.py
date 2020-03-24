@@ -19,6 +19,15 @@ class Directory:
         if name in self.actors:
             return self.actors[name]
 
+    def get_actors_names(self):
+        result = []
+        for name in self.actors:
+            result.append(name)
+        return result
+            
+    def __repr__(self):
+        return str(self.get_actors_names())
+
     def remove_actor(self, actor):
         gevent.kill(actor)
 
