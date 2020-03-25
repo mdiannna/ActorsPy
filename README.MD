@@ -1,4 +1,4 @@
-# Actors Based System for Wather Prediction
+# Actors Based System for Weather Prediction
 This project was done for the Real Time Applications Programming Lab at the University of Moldova, Software Engineering program.
 
 ## Screenshots and demo
@@ -29,11 +29,17 @@ http://0.0.0.0:5000/receive-sse-sensor-data
 
 ## Troubleshooting
 If you have problems, try:
+
 $docker-compose down
+
 $docker rm -f $(docker ps -aq)
+
 $docker rmi -f $(docker images -a -q)
+
 $sudo service redis-server stop
+
 $docker-compose up
+
 
 
 Also check your config.py if it is configured to work woth docker or local
